@@ -4,9 +4,9 @@
 #     pip install -r mkdocs-reqs.txt
 #
 
-site_name: urfave/cli
+site_name: aperturerobotics/cli
 site_url: https://cli.urfave.org/
-repo_url: https://github.com/urfave/cli
+repo_url: https://github.com/aperturerobotics/cli
 edit_uri: edit/main/docs/
 nav:
   - Home:

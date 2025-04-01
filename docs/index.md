@@ -1,73 +1,87 @@
-# Welcome to urfave/cli
+# Welcome to aperturerobotics/cli
 
-[![GoDoc](https://godoc.org/github.com/urfave/cli?status.svg)](https://pkg.go.dev/github.com/urfave/cli/v2)
-[![codebeat](https://codebeat.co/badges/0a8f30aa-f975-404b-b878-5fab3ae1cc5f)](https://codebeat.co/projects/github-com-urfave-cli)
-[![Go Report Card](https://goreportcard.com/badge/urfave/cli)](https://goreportcard.com/report/urfave/cli)
-[![codecov](https://codecov.io/gh/urfave/cli/branch/main/graph/badge.svg)](https://codecov.io/gh/urfave/cli)
+[![Go Reference](https://pkg.go.dev/badge/github.com/aperturerobotics/cli.svg)](https://pkg.go.dev/github.com/aperturerobotics/cli)
+[![Go Report Card](https://goreportcard.com/badge/github.com/aperturerobotics/cli)](https://goreportcard.com/report/github.com/aperturerobotics/cli)
 
-`urfave/cli` is a simple, fast, and fun package for building command line apps in Go. The
-goal is to enable developers to write fast and distributable command line applications in
-an expressive way.
+`aperturerobotics/cli` is a **fork** of the popular `urfave/cli` v2 package for building command line apps in Go.
 
-These are the guides for each major supported version:
+Key differences from `urfave/cli`:
 
-- [`v2`](./v2/getting-started)
-- [`v1`](./v1/getting-started)
+1.  **Slim and Reflection-Free:**
+    *   Removed `reflect` usage for smaller binaries and better performance.
+    *   Tinygo compatible.
+    *   Removed documentation generators.
+    *   Removed altsrc package to focus on CLI handling only.
+2.  **Stability:** Try to maintain backward compatibility as much as possible.
 
-In addition to the version-specific guides, these other documents are available:
+Documentation:
 
-- [CONTRIBUTING](./CONTRIBUTING/)
-- [CODE OF CONDUCT](./CODE_OF_CONDUCT/)
-- [RELEASING](./RELEASING/)
+- [Getting Started](./getting-started/)
+- [Examples](./examples/)
 
-## Installation
+## Getting Started
 
-Using this package requires a working Go environment. [See the install instructions for Go](http://golang.org/doc/install.html).
-
-Go Modules are required when using this package. [See the go blog guide on using Go Modules](https://blog.golang.org/using-go-modules).
-
-### Using `v2` releases
-
-```
-$ go get github.com/urfave/cli/v2
-```
+Here's a simple example to get you started:
 
 ```go
-...
+package main
+
 import (
-  "github.com/urfave/cli/v2" // imports as package "cli"
+	"fmt"
+	"os"
+
+	"github.com/aperturerobotics/cli"
 )
-...
+
+func main() {
+	cmd := &cli.Command{
+		Name:  "greet",
+		Usage: "say hello",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "name",
+				Value:   "world",
+				Usage:   "who to greet",
+				EnvVars: []string{"GREET_NAME"},
+			},
+		},
+		Action: func(ctx *cli.Context) error {
+			name := ctx.String("name")
+			fmt.Printf("Hello %s!\n", name)
+			return nil
+		},
+		Subcommands: []*cli.Command{
+			{
+				Name:  "add",
+				Usage: "add a task to the list",
+				Action: func(ctx *cli.Context) error {
+					fmt.Println("added task: ", ctx.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:  "complete",
+				Usage: "complete a task on the list",
+				Action: func(ctx *cli.Context) error {
+					fmt.Println("completed task: ", ctx.Args().First())
+					return nil
+				},
+			},
+		},
+	}
+
+	if err := cmd.Run(os.Args); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
 ```
 
-### Using `v1` releases
-
-```
-$ go get github.com/urfave/cli
-```
-
-```go
-...
-import (
-  "github.com/urfave/cli"
-)
-...
-```
-
-### Build tags
-
-You can use the following build tags:
-
-#### `urfave_cli_no_docs`
-
-When set, this removes `ToMarkdown` and `ToMan` methods, so your application
-won't be able to call those. This reduces the resulting binary size by about
-300-400 KB (measured using Go 1.18.1 on Linux/amd64), due to fewer dependencies.
+Running this provides basic command functionality, including help text generation, flag parsing, environment variable handling, and subcommand routing. You can easily add more flags, subcommands, and complex actions. See the [full getting started guide](./getting-started/) for more details.
 
 ### Supported platforms
 
 cli is tested against multiple versions of Go on Linux, and against the latest
 released version of Go on OS X and Windows. This project uses GitHub Actions
 for builds. To see our currently supported go versions and platforms, look at
-the [github workflow
-configuration](https://github.com/urfave/cli/blob/main/.github/workflows/cli.yml).
+the [github workflow configuration](https://github.com/aperturerobotics/cli/blob/main/.github/workflows/tests.yml).

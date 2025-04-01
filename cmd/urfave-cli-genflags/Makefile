@@ -1,5 +1,5 @@
 GOIMPORTS_BIN ?= $(shell which goimports || true)
-GOTEST_FLAGS ?= -v --coverprofile main.coverprofile --covermode count --cover github.com/urfave/cli/v2/cmd/urfave-cli-genflags
+GOTEST_FLAGS ?= -v --coverprofile main.coverprofile --covermode count --cover github.com/aperturerobootics/cli/cmd/urfave-cli-genflags
 GOBUILD_FLAGS ?= -x
 
 export GOIMPORTS_BIN
@@ -26,4 +26,4 @@ show-cover:
 .PHONY: run
 run: build
 	./urfave-cli-genflags	
-	./urfave-cli-genflags -f altsrc/flag-spec.yaml -o altsrc/flag_generated.go -p altsrc -a
+	# ./urfave-cli-genflags -f altsrc/flag-spec.yaml -o altsrc/flag_generated.go -p altsrc -a

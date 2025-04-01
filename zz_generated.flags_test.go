@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/urfave/cli/v2"
+	"github.com/aperturerobotics/cli"
 )
 
 func TestFloat64SliceFlag_SatisfiesFlagInterface(t *testing.T) {

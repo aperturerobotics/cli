@@ -1,26 +1,31 @@
-# NOTE: this Makefile is meant to provide a simplified entry point for humans to
-# run all of the critical steps to verify one's changes are harmonious in
-# nature. Keeping target bodies to one line each and abstaining from make magic
-# are very important so that maintainers and contributors can focus their
-# attention on files that are primarily Go.
+# https://github.com/aperturerobotics/template
+PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+SHELL:=bash
+MAKEFLAGS += --no-print-directory
 
-GO_RUN_BUILD := go run internal/build/build.go
+GO_VENDOR_DIR := ./vendor
+COMMON_DIR := $(GO_VENDOR_DIR)/github.com/aperturerobotics/common
+COMMON_MAKEFILE := $(COMMON_DIR)/Makefile
 
-.PHONY: all
-all: generate vet test check-binary-size gfmrun yamlfmt v2diff
+export GO111MODULE=on
+undefine GOARCH
+undefine GOOS
 
-# NOTE: this is a special catch-all rule to run any of the commands
-# defined in internal/build/build.go with optional arguments passed
-# via GFLAGS (global flags) and FLAGS (command-specific flags), e.g.:
-#
-#   $ make test GFLAGS='--packages cli'
-%:
-	$(GO_RUN_BUILD) $(GFLAGS) $* $(FLAGS)
+.PHONY: $(MAKECMDGOALS)
 
-.PHONY: docs
-docs:
-	mkdocs build
+all:
 
-.PHONY: serve-docs
-serve-docs:
-	mkdocs serve
+$(COMMON_MAKEFILE): vendor
+	@if [ ! -f $(COMMON_MAKEFILE) ]; then \
+		echo "Please add github.com/aperturerobotics/common to your go.mod."; \
+		exit 1; \
+	fi
+
+$(MAKECMDGOALS): $(COMMON_MAKEFILE)
+	@$(MAKE) -C $(COMMON_DIR) PROJECT_DIR="$(PROJECT_DIR)" $@
+
+%: $(COMMON_MAKEFILE)
+	@$(MAKE) -C $(COMMON_DIR) PROJECT_DIR="$(PROJECT_DIR)" $@
+
+vendor:
+	go mod vendor

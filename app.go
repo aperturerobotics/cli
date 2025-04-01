@@ -15,12 +15,9 @@ import (
 const suggestDidYouMeanTemplate = "Did you mean %q?"
 
 var (
-	changeLogURL            = "https://github.com/urfave/cli/blob/main/docs/CHANGELOG.md"
-	appActionDeprecationURL = fmt.Sprintf("%s#deprecated-cli-app-action-signature", changeLogURL)
-	contactSysadmin         = "This is an error in the application.  Please contact the distributor of this application if this is not you."
-	errInvalidActionType    = NewExitError("ERROR invalid Action type. "+
-		fmt.Sprintf("Must be `func(*Context`)` or `func(*Context) error).  %s", contactSysadmin)+
-		fmt.Sprintf("See %s", appActionDeprecationURL), 2)
+	contactSysadmin      = "This is an error in the application.  Please contact the distributor of this application if this is not you."
+	errInvalidActionType = NewExitError("ERROR invalid Action type. "+
+		fmt.Sprintf("Must be `func(*Context`)` or `func(*Context) error).  %s", contactSysadmin), 1)
 	ignoreFlagPrefix = "test." // this is to ignore test flags when adding flags from other packages
 
 	SuggestFlag               SuggestFlagFunc    = nil // initialized in suggestions.go unless built with urfave_cli_no_suggest

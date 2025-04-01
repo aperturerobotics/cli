@@ -3,7 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"reflect"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -252,7 +252,10 @@ func (c *Command) Run(cCtx *Context, arguments ...string) (err error) {
 
 			if isFlagName || (hasDefault && (defaultHasSubcommands && isDefaultSubcommand)) {
 				argsWithDefault := cCtx.App.argsWithDefaultCommand(args)
-				if !reflect.DeepEqual(args, argsWithDefault) {
+				// Check if the arguments slice was modified by prepending the default command.
+				// We compare the slice representations because the Args interface itself might
+				// be implemented by pointers, and we care about the content.
+				if !slices.Equal(args.Slice(), argsWithDefault.Slice()) {
 					cmd = cCtx.App.rootCommand.Command(argsWithDefault.First())
 				}
 			}
@@ -342,12 +345,7 @@ func (c *Command) Names() []string {
 
 // HasName returns true if Command.Name matches given name
 func (c *Command) HasName(name string) bool {
-	for _, n := range c.Names() {
-		if n == name {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(c.Names(), name)
 }
 
 // VisibleCategories returns a slice of categories and commands that are

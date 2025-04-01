@@ -15,7 +15,7 @@ import (
 	"syscall"
 	"text/template"
 
-	"github.com/urfave/cli/v2"
+	"github.com/aperturerobotics/cli"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
@@ -59,7 +59,7 @@ func main() {
 
 	app := &cli.App{
 		Name:  "genflags",
-		Usage: "Generate flag types for urfave/cli",
+		Usage: "Generate flag types for the cli",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "altsrc",

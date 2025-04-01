@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -155,7 +156,7 @@ func (cCtx *Context) Count(name string) int {
 }
 
 // Value returns the value of the flag corresponding to `name`
-func (cCtx *Context) Value(name string) interface{} {
+func (cCtx *Context) Value(name string) any {
 	if fs := cCtx.lookupFlagSet(name); fs != nil {
 		return fs.Lookup(name).Value.(flag.Getter).Get()
 	}
@@ -180,20 +181,16 @@ func (cCtx *Context) lookupFlag(name string) Flag {
 		}
 
 		for _, f := range c.Command.Flags {
-			for _, n := range f.Names() {
-				if n == name {
-					return f
-				}
+			if slices.Contains(f.Names(), name) {
+				return f
 			}
 		}
 	}
 
 	if cCtx.App != nil {
 		for _, f := range cCtx.App.Flags {
-			for _, n := range f.Names() {
-				if n == name {
-					return f
-				}
+			if slices.Contains(f.Names(), name) {
+				return f
 			}
 		}
 	}

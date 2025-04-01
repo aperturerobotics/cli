@@ -363,7 +363,8 @@ func TestSliceFlag_Apply_string(t *testing.T) {
 					if err := set.Parse([]string{`-h`}); err != flag.ErrHelp {
 						t.Fatal(err)
 					}
-					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t\n" {
+					// Expect the default value to be shown now, even if empty
+					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t (default [])\n" {
 						t.Errorf("unexpected output: %q\n%s", s, s)
 					}
 				}
@@ -563,7 +564,8 @@ func TestSliceFlag_Apply_float64(t *testing.T) {
 					if err := set.Parse([]string{`-h`}); err != flag.ErrHelp {
 						t.Fatal(err)
 					}
-					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t\n" {
+					// Expect the default value to be shown now, even if empty
+					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t (default []float64{})\n" {
 						t.Errorf("unexpected output: %q\n%s", s, s)
 					}
 				}
@@ -763,7 +765,8 @@ func TestSliceFlag_Apply_int64(t *testing.T) {
 					if err := set.Parse([]string{`-h`}); err != flag.ErrHelp {
 						t.Fatal(err)
 					}
-					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t\n" {
+					// Expect the default value to be shown now, even if empty
+					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t (default []int64{})\n" {
 						t.Errorf("unexpected output: %q\n%s", s, s)
 					}
 				}
@@ -963,7 +966,8 @@ func TestSliceFlag_Apply_int(t *testing.T) {
 					if err := set.Parse([]string{`-h`}); err != flag.ErrHelp {
 						t.Fatal(err)
 					}
-					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t\n" {
+					// Expect the default value to be shown now, even if empty
+					if s := output.String(); s != "Usage of flagset:\n  -a value\n    \t (default []int{})\n" {
 						t.Errorf("unexpected output: %q\n%s", s, s)
 					}
 				}
@@ -993,10 +997,11 @@ func TestFlagValueHook_String_struct(t *testing.T) {
 	wrap := func(values ...int) *flagValueHook {
 		return &flagValueHook{value: intSliceWrapperDefaultingNil{NewIntSlice(values...)}}
 	}
-	if s := wrap().String(); s != `` {
+	if s := wrap().String(); s != `[]int{}` {
 		t.Error(s)
 	}
+	// The String() method now always returns the underlying value's string representation
 	if s := wrap(1).String(); s != `[]int{1}` {
-		t.Error(s)
+		t.Errorf("unexpected string representation: %q", s)
 	}
 }
