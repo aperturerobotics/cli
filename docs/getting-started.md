@@ -154,4 +154,4 @@ func main() {
 
 Now, the main action is performed by running `go run main.go greet --name Dave`. Running `go run main.go --help` will show the available subcommands.
 
-This tutorial covers the basics of creating a CLI application, adding flags, and organizing functionality with subcommands using `aperturerobotics/cli`. Explore the [Examples](./examples/) section for more advanced use cases.
+This tutorial covers the basics of creating a CLI application, adding flags, and organizing functionality with subcommands using `aperturerobotics/cli`. Explore the [Examples](../examples/) section for more advanced use cases.
