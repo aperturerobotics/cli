@@ -6,7 +6,7 @@ replace github.com/aperturerobotics/cli => ../../
 
 require (
 	github.com/aperturerobotics/cli v0.0.0-00010101000000-000000000000
-	golang.org/x/text v0.4.0
+	golang.org/x/text v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
