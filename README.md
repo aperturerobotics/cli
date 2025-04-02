@@ -34,15 +34,16 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/aperturerobotics/cli"
 )
 
 func main() {
-	cmd := &cli.Command{
+	app := &cli.App{
 		Name:  "greet",
-		Usage: "say hello",
+		Usage: "a simple greeter application",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "name",
@@ -51,15 +52,18 @@ func main() {
 				EnvVars: []string{"GREET_NAME"},
 			},
 		},
+		// The action for the root command (optional)
 		Action: func(ctx *cli.Context) error {
 			name := ctx.String("name")
 			fmt.Printf("Hello %s!\n", name)
 			return nil
 		},
-		Subcommands: []*cli.Command{
+		// Define subcommands
+		Commands: []*cli.Command{
 			{
 				Name:  "add",
 				Usage: "add a task to the list",
+				// Action for the 'add' subcommand
 				Action: func(ctx *cli.Context) error {
 					fmt.Println("added task: ", ctx.Args().First())
 					return nil
@@ -68,6 +72,7 @@ func main() {
 			{
 				Name:  "complete",
 				Usage: "complete a task on the list",
+				// Action for the 'complete' subcommand
 				Action: func(ctx *cli.Context) error {
 					fmt.Println("completed task: ", ctx.Args().First())
 					return nil
@@ -76,9 +81,9 @@ func main() {
 		},
 	}
 
-	if err := cmd.Run(os.Args); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
+	// Run the application
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }
 
