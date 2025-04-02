@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -32,6 +33,11 @@ func (f *UintFlag) Apply(set *flag.FlagSet) error {
 			valInt, err := strconv.ParseUint(val, f.Base, 64)
 			if err != nil {
 				return fmt.Errorf("could not parse %q as uint value from %s for flag %s: %s", val, source, f.Name, err)
+			}
+
+			// Check if the parsed value exceeds the maximum value for uint.
+			if valInt > math.MaxUint {
+				return fmt.Errorf("value %q from %s for flag %s exceeds maximum uint value", val, source, f.Name)
 			}
 
 			f.Value = uint(valInt)
@@ -101,6 +107,10 @@ func lookupUint(name string, set *flag.FlagSet) uint {
 		parsed, err := strconv.ParseUint(f.Value.String(), 0, 64)
 		if err != nil {
 			return 0
+		}
+		// Check if the parsed value exceeds the maximum value for uint.
+		if parsed > math.MaxUint {
+			return 0 // Return 0 if the value is out of range for uint.
 		}
 		return uint(parsed)
 	}

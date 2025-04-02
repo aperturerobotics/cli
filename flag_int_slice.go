@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -63,6 +64,11 @@ func (i *IntSlice) Set(value string) error {
 		tmp, err := strconv.ParseInt(strings.TrimSpace(s), 0, 64)
 		if err != nil {
 			return err
+		}
+
+		// Check if the parsed value is within the range of int.
+		if tmp < math.MinInt || tmp > math.MaxInt {
+			return fmt.Errorf("value %q is out of range for int", s)
 		}
 
 		i.slice = append(i.slice, int(tmp))

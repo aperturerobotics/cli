@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -57,6 +58,11 @@ func (f *IntFlag) Apply(set *flag.FlagSet) error {
 				return fmt.Errorf("could not parse %q as int value from %s for flag %s: %s", val, source, f.Name, err)
 			}
 
+			// Check if the parsed value is within the range of int.
+			if valInt < math.MinInt || valInt > math.MaxInt {
+				return fmt.Errorf("value %q from %s for flag %s is out of range for int", val, source, f.Name)
+			}
+
 			f.Value = int(valInt)
 			f.HasBeenSet = true
 		}
@@ -102,6 +108,10 @@ func lookupInt(name string, set *flag.FlagSet) int {
 		parsed, err := strconv.ParseInt(f.Value.String(), 0, 64)
 		if err != nil {
 			return 0
+		}
+		// Check if the parsed value is within the range of int.
+		if parsed < math.MinInt || parsed > math.MaxInt {
+			return 0 // Return 0 if the value is out of range for int.
 		}
 		return int(parsed)
 	}
