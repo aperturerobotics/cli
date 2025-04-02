@@ -9,11 +9,12 @@
 
 Key differences from `urfave/cli`:
 
-1.  **Reflection-Free:** All features relying on `reflect` have been removed. This makes the library suitable for environments where reflection is undesirable or restricted, potentially improving performance and reducing binary size.
-2.  **Selective v3 Backports:** Some ergonomic improvements from `urfave/cli` v3 have been incorporated:
-    *   `cli.App` has been renamed to `cli.Command` for better semantic clarity, especially in applications with subcommands. The top-level application is now simply the root `Command`.
-    *   Action handlers (`Action`, `Before`, `After`, etc.) now accept `context.Context` as their first argument, enabling easier integration with context-aware Go applications.
-3.  **Stability:** We strive to maintain backward compatibility and avoid breaking changes.
+1.  **Slim and Reflection-Free:**
+    *   Removed `reflect` usage for smaller binaries and better performance.
+    *   Tinygo compatible.
+    *   Removed documentation generators.
+    *   Removed altsrc package to focus on CLI handling only.
+2.  **Stability:** Try to maintain backward compatibility as much as possible.
 
 ## Installation
 
