@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"strconv"
+	"math"
 )
 
 // TakesValue returns true of the flag takes a value, otherwise false
@@ -101,6 +102,9 @@ func lookupInt(name string, set *flag.FlagSet) int {
 	if f != nil {
 		parsed, err := strconv.ParseInt(f.Value.String(), 0, 64)
 		if err != nil {
+			return 0
+		}
+		if parsed < math.MinInt || parsed > math.MaxInt {
 			return 0
 		}
 		return int(parsed)
