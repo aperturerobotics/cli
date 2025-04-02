@@ -3,14 +3,13 @@ search:
   boost: 2
 ---
 
-The default version flag (`-v/--version`) is defined as `cli.VersionFlag`, which
-is checked by the cli internals in order to print the `App.Version` via
-`cli.VersionPrinter` and break execution.
+Similar to the help flag, the library provides built-in support for a version flag. By default, `-v` or `--version` (defined by `cli.VersionFlag`) triggers the display of the application's version string (set in `App.Version`). The `cli.VersionPrinter` function handles the printing, and then the application exits.
 
 #### Customization
 
-The default flag may be customized to something other than `-v/--version` by
-setting `cli.VersionFlag`, e.g.:
+You can customize the version flag behavior:
+
+1.  **Change the Flag:** Assign a different `cli.Flag` implementation to the `cli.VersionFlag` variable to change which flag(s) trigger the version display.
 
 <!-- {
   "args": ["&#45;&#45print-version"],
@@ -40,8 +39,7 @@ func main() {
 }
 ```
 
-Alternatively, the version printer at `cli.VersionPrinter` may be overridden,
-e.g.:
+2.  **Customize Output:** Replace the `cli.VersionPrinter` function to control how the version information is formatted and printed. This is useful for including additional details like build revision numbers.
 
 <!-- {
   "args": ["&#45;&#45version"],

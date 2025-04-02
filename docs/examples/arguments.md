@@ -3,7 +3,7 @@ search:
   boost: 2
 ---
 
-You can lookup arguments by calling the `Args` function on `cli.Context`, e.g.:
+Accessing command-line arguments (values passed after the command and flags) is straightforward using the `Args` method on `cli.Context`. Here's an example:
 
 <!-- {
   "output": "Hello \""

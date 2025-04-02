@@ -3,17 +3,16 @@ search:
   boost: 2
 ---
 
-The default help flag (`-h/--help`) is defined as `cli.HelpFlag` and is checked
-by the cli internals in order to print generated help text for the app, command,
-or subcommand, and break execution.
+The library automatically generates help text for your application, commands, and subcommands. By default, this help text is displayed when the user provides the `-h` or `--help` flag (defined by `cli.HelpFlag`). When this flag is detected, the help text is printed, and the application exits.
 
 #### Customization
 
-All of the help text generation may be customized, and at multiple levels.  The
-templates are exposed as variables `AppHelpTemplate`, `CommandHelpTemplate`, and
-`SubcommandHelpTemplate` which may be reassigned or augmented, and full override
-is possible by assigning a compatible func to the `cli.HelpPrinter` variable,
-e.g.:
+You have several ways to customize the generated help output:
+
+1.  **Modify Templates:** The default Go text templates used for generation (`cli.AppHelpTemplate`, `cli.CommandHelpTemplate`, `cli.SubcommandHelpTemplate`) are exported variables. You can modify them directly, for example, by appending extra information or completely replacing them with your own template strings.
+2.  **Replace Help Printer:** For complete control over rendering, you can replace the `cli.HelpPrinter` function. This function receives the output writer, the template string, and the data object (like `*cli.App` or `*cli.Command`) and is responsible for executing the template or generating help in any way you choose.
+
+Here are examples of these customization techniques:
 
 <!-- {
   "output": "Ha HA.  I pwnd the help!!1"
@@ -70,8 +69,7 @@ VERSION:
 }
 ```
 
-The default flag may be customized to something other than `-h/--help` by
-setting `cli.HelpFlag`, e.g.:
+You can also change the flag used to trigger the help display (instead of the default `-h/--help`) by assigning a different `cli.Flag` implementation to the `cli.HelpFlag` variable:
 
 <!-- {
   "args": ["&#45;&#45halp"],

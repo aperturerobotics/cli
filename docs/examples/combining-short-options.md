@@ -3,16 +3,15 @@ search:
   boost: 2
 ---
 
-Traditional use of options using their shortnames look like this:
+Normally, short options (like `-s`, `-o`, `-m`) are specified individually:
 
 ```sh-session
 $ cmd -s -o -m "Some message"
 ```
 
-Suppose you want users to be able to combine options with their shortnames. This
-can be done using the `UseShortOptionHandling` bool in your app configuration,
-or for individual commands by attaching it to the command configuration. For
-example:
+If you want to allow users to combine multiple short boolean options (and optionally one non-boolean short option at the end), you can enable this behavior by setting `UseShortOptionHandling` to `true` on your `cli.App` or a specific `cli.Command`.
+
+Here's an example:
 
 <!-- {
   "args": ["short", "&#45;som", "Some message"],
@@ -66,7 +65,4 @@ following syntax:
 $ cmd -som "Some message"
 ```
 
-If you enable `UseShortOptionHandling`, then you must not use any flags that
-have a single leading `-` or this will result in failures. For example,
-`-option` can no longer be used. Flags with two leading dashes (such as
-`--options`) are still valid.
+**Important:** When `UseShortOptionHandling` is enabled, you cannot define flags that use a single dash followed by multiple characters (e.g., `-option`). This syntax becomes ambiguous with combined short options. Standard double-dash flags (e.g., `--option`) remain unaffected.

@@ -3,7 +3,7 @@ search:
   boost: 2
 ---
 
-Subcommands can be defined for a more git-like command line app.
+You can structure your application with subcommands, similar to tools like `git` or `docker`. Define subcommands by assigning a slice of `*cli.Command` structs to the `Commands` field of your `cli.App` or another `cli.Command`.
 
 <!-- {
   "args": ["template", "add"],

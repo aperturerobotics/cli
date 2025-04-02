@@ -3,10 +3,7 @@ search:
   boost: 2
 ---
 
-You can enable completion commands by setting the `EnableBashCompletion` flag on
-the `App` object to `true`.  By default, this setting will allow auto-completion
-for an app's subcommands, but you can write your own completion methods for the
-App or its subcommands as well.
+You can enable built-in bash completion support by setting the `EnableBashCompletion` field on your `cli.App` to `true`. This automatically provides completion suggestions for your app's subcommands. You can also define custom completion logic for specific commands or flags.
 
 #### Default auto-completion
 
@@ -128,16 +125,13 @@ func main() {
 
 #### Enabling
 
-To enable auto-completion for the current shell session, a bash script,
-`autocomplete/bash_autocomplete` is included in this repo.
+To enable auto-completion for your application in the current shell session, you can use the `autocomplete/bash_autocomplete` script provided in the `aperturerobotics/cli` repository.
 
 > :warning: The `bash-completion` package or equivalent that provides the
 > `_get_comp_words_by_ref` function for the target platform must be installed and
 > initialized for this completion script to work correctly.
 
-To use `autocomplete/bash_autocomplete` set an environment variable named `PROG`
-to the name of your program and then `source` the
-`autocomplete/bash_autocomplete` file.
+First, set the `PROG` environment variable to the name of your compiled application binary. Then, `source` the `autocomplete/bash_autocomplete` script:
 
 For example, if your cli program is called `myprogram`:
 
@@ -150,19 +144,16 @@ a new shell.
 
 #### Distribution and Persistent Autocompletion
 
-Copy `autocomplete/bash_autocomplete` into `/etc/bash_completion.d/` and rename
-it to the name of the program you wish to add autocomplete support for (or
-automatically install it there if you are distributing a package). Don't forget
-to source the file or restart your shell to activate the auto-completion.
+To make autocompletion persistent across shell sessions, you have a few options:
+
+1.  **System-wide Installation:** Copy `autocomplete/bash_autocomplete` to `/etc/bash_completion.d/` and rename it to match your program's name (e.g., `/etc/bash_completion.d/myprogram`). This is common when distributing packages. Users may need to restart their shell or source the file manually (`source /etc/bash_completion.d/<myprogram>`) for the changes to take effect immediately.
 
 ```sh-session
 $ sudo cp path/to/autocomplete/bash_autocomplete /etc/bash_completion.d/<myprogram>
 $ source /etc/bash_completion.d/<myprogram>
 ```
 
-Alternatively, you can just document that users should `source` the generic
-`autocomplete/bash_autocomplete` and set `$PROG` within their bash configuration
-file, adding these lines:
+2.  **User Configuration:** Instruct users to add the following lines to their shell configuration file (e.g., `~/.bashrc` or `~/.bash_profile`), ensuring they replace `<myprogram>` with the actual program name and `path/to/cli` with the correct path to the script:
 
 ```sh-session
 $ PROG=<myprogram>

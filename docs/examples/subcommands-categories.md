@@ -3,9 +3,7 @@ search:
   boost: 2
 ---
 
-For additional organization in apps that have many subcommands, you can
-associate a category for each command to group them together in the help
-output, e.g.:
+When your application has numerous subcommands, organizing them into categories can significantly improve the clarity of the help output. You can assign a category to a command by setting its `Category` field. Commands with the same category will be grouped together in the help text.
 
 <!-- {
   "output": ".*COMMANDS:\\n.*noop[ ]*\\n.*\\n[ ]*template:\\n[ ]*add[ ]*\\n[ ]*remove.*"

@@ -3,10 +3,9 @@ search:
   boost: 2
 ---
 
-Calling `App.Run` will not automatically call `os.Exit`, which means that by
-default the exit code will "fall through" to being `0`.  An explicit exit code
-may be set by returning a non-nil error that fulfills `cli.ExitCoder`, *or* a
-`cli.MultiError` that includes an error that fulfills `cli.ExitCoder`, e.g.:
+By default, `App.Run` does not call `os.Exit`. If your application's `Action` (or subcommand actions) returns `nil`, the process exits with code `0`. To exit with a specific non-zero code, return an error that implements the `cli.ExitCoder` interface. The `cli.Exit` helper function is provided for convenience. If using `cli.MultiError`, the exit code will be determined by the first `cli.ExitCoder` found within the wrapped errors.
+
+Here's an example using `cli.Exit`:
 <!-- {
   "error": "Ginger croutons are not in the soup"
 } -->

@@ -3,9 +3,7 @@ search:
   boost: 2
 ---
 
-Using the timestamp flag is simple. Please refer to
-[`time.Parse`](https://golang.org/pkg/time/#example_Parse) to get possible
-formats.
+The `TimestampFlag` allows users to provide date and time values as command-line arguments. You must specify the expected format using the `Layout` field. The layout string follows the rules of Go's `time.Parse` function (refer to the [`time` package documentation](https://golang.org/pkg/time/#Parse) for details on defining layouts).
 
 <!-- {
   "args": ["&#45;&#45;meeting", "2019-08-12T15:04:05"],
@@ -45,8 +43,7 @@ In this example the flag could be used like this:
 $ myapp --meeting 2019-08-12T15:04:05
 ```
 
-When the layout doesn't contain timezones, timestamp will render with UTC. To
-change behavior, a default timezone can be provided with flag definition:
+If the specified `Layout` does not include timezone information, the parsed time will be in UTC by default. You can specify a different default timezone (like the system's local time) using the `Timezone` field:
 
 ```go
 package main

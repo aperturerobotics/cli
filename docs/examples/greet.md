@@ -3,9 +3,7 @@ search:
   boost: 2
 ---
 
-Being a programmer can be a lonely job. Thankfully by the power of automation
-that is not the case! Let's create a greeter app to fend off our demons of
-loneliness!
+Let's build a simple "greeter" application to demonstrate the basic structure of a `cli` app. This example will create a command that prints a friendly greeting.
 
 Start by creating a directory named `greet`, and within it, add a file,
 `greet.go` with the following code in it:
