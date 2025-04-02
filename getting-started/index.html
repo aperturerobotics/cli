@@ -73,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#adding-flags" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -351,6 +356,19 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -362,6 +380,41 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Flags
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Subcommands
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -736,6 +789,32 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Flags
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Subcommands
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -755,8 +834,7 @@
 
   <h1>Getting Started</h1>
 
-<p>One of the philosophies behind cli is that an API should be playful and full of
-discovery. So a cli app can be as little as one line of code in <code>main()</code>.</p>
+<p>Getting started with <code>aperturerobotics/cli</code> is incredibly simple. A functional command-line application can be created with just a single line of code in your <code>main()</code> function.</p>
 <!-- {
   "args": ["&#45;&#45;help"],
   "output": "A new cli application"
@@ -773,8 +851,7 @@ discovery. So a cli app can be as little as one line of code in <code>main()</co
 <span class="w">    </span><span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{}).</span><span class="nx">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>This app will run and show help text, but is not very useful. Let's give an
-action to execute and some help documentation:</p>
+<p>While this app runs and displays basic help text, it doesn't perform any actions yet. Let's enhance it by adding a name, usage description, and an action to execute:</p>
 <!-- {
   "output": "boom! I say!"
 } -->
@@ -803,8 +880,95 @@ action to execute and some help documentation:</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>Running this already gives you a ton of functionality, plus support for things
-like subcommands and flags, which are covered below.</p>
+<p>Running this improved version provides a more useful application with clear help text and a defined action.</p>
+<h2 id="adding-flags">Adding Flags<a class="headerlink" href="#adding-flags" title="Permanent link">&para;</a></h2>
+<p>Let's make our application more interactive by adding a flag. Flags allow users to pass options to the command. We'll add a <code>--name</code> flag to specify who to greet.</p>
+<!-- {
+  "args": ["&#45;&#45;name", "Alice"],
+  "output": "boom! Hello Alice!"
+} -->
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span>
+<span class="w">    </span><span class="s">&quot;log&quot;</span>
+<span class="w">    </span><span class="s">&quot;os&quot;</span>
+
+<span class="w">    </span><span class="s">&quot;github.com/aperturerobotics/cli&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">app</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">Name</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;boom&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">Usage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;make an explosive entrance&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">Flags</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">cli</span><span class="p">.</span><span class="nx">Flag</span><span class="p">{</span>
+<span class="w">            </span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">StringFlag</span><span class="p">{</span>
+<span class="w">                </span><span class="nx">Name</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;name&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">Value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;world&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// Default value</span>
+<span class="w">                </span><span class="nx">Usage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;who to greet&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">Action</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">cCtx</span><span class="w"> </span><span class="o">*</span><span class="nx">cli</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">name</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">cCtx</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;boom! Hello %s!\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">)</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">app</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Now you can run <code>go run main.go --name Bob</code> or simply <code>go run main.go</code> to use the default value "world". The help output (<code>go run main.go --help</code>) will also automatically include information about the new flag.</p>
+<h2 id="adding-subcommands">Adding Subcommands<a class="headerlink" href="#adding-subcommands" title="Permanent link">&para;</a></h2>
+<p>For more complex applications, you might want different actions grouped under subcommands (like <code>git commit</code> or <code>docker ps</code>). Let's add a <code>greet</code> subcommand to our <code>boom</code> app.</p>
+<!-- {
+  "args": ["greet", "&#45;&#45;name", "Carol"],
+  "output": "Hello Carol!"
+} -->
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span>
+<span class="w">    </span><span class="s">&quot;log&quot;</span>
+<span class="w">    </span><span class="s">&quot;os&quot;</span>
+
+<span class="w">    </span><span class="s">&quot;github.com/aperturerobotics/cli&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">app</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">Name</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;boom&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">Usage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;make an explosive entrance&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">Commands</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="o">*</span><span class="nx">cli</span><span class="p">.</span><span class="nx">Command</span><span class="p">{</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nx">Name</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;greet&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">Usage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;say hello&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">Flags</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">cli</span><span class="p">.</span><span class="nx">Flag</span><span class="p">{</span>
+<span class="w">                    </span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">StringFlag</span><span class="p">{</span>
+<span class="w">                        </span><span class="nx">Name</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;name&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nx">Value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;world&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nx">Usage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;who to greet&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nx">Action</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">cCtx</span><span class="w"> </span><span class="o">*</span><span class="nx">cli</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nx">name</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">cCtx</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+<span class="w">                    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Hello %s!\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="c1">// Add more subcommands here</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">app</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Now, the main action is performed by running <code>go run main.go greet --name Dave</code>. Running <code>go run main.go --help</code> will show the available subcommands.</p>
+<p>This tutorial covers the basics of creating a CLI application, adding flags, and organizing functionality with subcommands using <code>aperturerobotics/cli</code>. Explore the <a href="./examples/">Examples</a> section for more advanced use cases.</p>
 
 
 
