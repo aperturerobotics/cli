@@ -819,15 +819,14 @@
 
   <h1>Generated Help Text</h1>
 
-<p>The default help flag (<code>-h/--help</code>) is defined as <code>cli.HelpFlag</code> and is checked
-by the cli internals in order to print generated help text for the app, command,
-or subcommand, and break execution.</p>
+<p>The library automatically generates help text for your application, commands, and subcommands. By default, this help text is displayed when the user provides the <code>-h</code> or <code>--help</code> flag (defined by <code>cli.HelpFlag</code>). When this flag is detected, the help text is printed, and the application exits.</p>
 <h4 id="customization">Customization<a class="headerlink" href="#customization" title="Permanent link">&para;</a></h4>
-<p>All of the help text generation may be customized, and at multiple levels.  The
-templates are exposed as variables <code>AppHelpTemplate</code>, <code>CommandHelpTemplate</code>, and
-<code>SubcommandHelpTemplate</code> which may be reassigned or augmented, and full override
-is possible by assigning a compatible func to the <code>cli.HelpPrinter</code> variable,
-e.g.:</p>
+<p>You have several ways to customize the generated help output:</p>
+<ol>
+<li><strong>Modify Templates:</strong> The default Go text templates used for generation (<code>cli.AppHelpTemplate</code>, <code>cli.CommandHelpTemplate</code>, <code>cli.SubcommandHelpTemplate</code>) are exported variables. You can modify them directly, for example, by appending extra information or completely replacing them with your own template strings.</li>
+<li><strong>Replace Help Printer:</strong> For complete control over rendering, you can replace the <code>cli.HelpPrinter</code> function. This function receives the output writer, the template string, and the data object (like <code>*cli.App</code> or <code>*cli.Command</code>) and is responsible for executing the template or generating help in any way you choose.</li>
+</ol>
+<p>Here are examples of these customization techniques:</p>
 <!-- {
   "output": "Ha HA.  I pwnd the help!!1"
 } -->
@@ -881,8 +880,7 @@ e.g.:</p>
 <span class="w">    </span><span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{}).</span><span class="nx">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>The default flag may be customized to something other than <code>-h/--help</code> by
-setting <code>cli.HelpFlag</code>, e.g.:</p>
+<p>You can also change the flag used to trigger the help display (instead of the default <code>-h/--help</code>) by assigning a different <code>cli.Flag</code> implementation to the <code>cli.HelpFlag</code> variable:</p>
 <!-- {
   "args": ["&#45;&#45halp"],
   "output": "haaaaalp.*HALP"
@@ -926,7 +924,7 @@ setting <code>cli.HelpFlag</code>, e.g.:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 1, 2025 21:40:22">April 1, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 2, 2025 04:55:42">April 2, 2025</span>
   </span>
 
     

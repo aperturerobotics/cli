@@ -758,13 +758,11 @@
 
   <h1>Combining Short Options</h1>
 
-<p>Traditional use of options using their shortnames look like this:</p>
+<p>Normally, short options (like <code>-s</code>, <code>-o</code>, <code>-m</code>) are specified individually:</p>
 <div class="highlight"><pre><span></span><code>$ cmd -s -o -m &quot;Some message&quot;
 </code></pre></div>
-<p>Suppose you want users to be able to combine options with their shortnames. This
-can be done using the <code>UseShortOptionHandling</code> bool in your app configuration,
-or for individual commands by attaching it to the command configuration. For
-example:</p>
+<p>If you want to allow users to combine multiple short boolean options (and optionally one non-boolean short option at the end), you can enable this behavior by setting <code>UseShortOptionHandling</code> to <code>true</code> on your <code>cli.App</code> or a specific <code>cli.Command</code>.</p>
+<p>Here's an example:</p>
 <!-- {
   "args": ["short", "&#45;som", "Some message"],
   "output": "serve: true\noption: true\nmessage: Some message\n"
@@ -812,10 +810,7 @@ and <code>-m</code> respectively, setting <code>UseShortOptionHandling</code> wi
 following syntax:</p>
 <div class="highlight"><pre><span></span><code>$ cmd -som &quot;Some message&quot;
 </code></pre></div>
-<p>If you enable <code>UseShortOptionHandling</code>, then you must not use any flags that
-have a single leading <code>-</code> or this will result in failures. For example,
-<code>-option</code> can no longer be used. Flags with two leading dashes (such as
-<code>--options</code>) are still valid.</p>
+<p><strong>Important:</strong> When <code>UseShortOptionHandling</code> is enabled, you cannot define flags that use a single dash followed by multiple characters (e.g., <code>-option</code>). This syntax becomes ambiguous with combined short options. Standard double-dash flags (e.g., <code>--option</code>) remain unaffected.</p>
 
 
 
@@ -836,7 +831,7 @@ have a single leading <code>-</code> or this will result in failures. For exampl
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 1, 2025 21:40:22">April 1, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 2, 2025 04:55:42">April 2, 2025</span>
   </span>
 
     

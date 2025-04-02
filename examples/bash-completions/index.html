@@ -963,10 +963,7 @@
 
   <h1>Bash Completions</h1>
 
-<p>You can enable completion commands by setting the <code>EnableBashCompletion</code> flag on
-the <code>App</code> object to <code>true</code>.  By default, this setting will allow auto-completion
-for an app's subcommands, but you can write your own completion methods for the
-App or its subcommands as well.</p>
+<p>You can enable built-in bash completion support by setting the <code>EnableBashCompletion</code> field on your <code>cli.App</code> to <code>true</code>. This automatically provides completion suggestions for your app's subcommands. You can also define custom completion logic for specific commands or flags.</p>
 <h4 id="default-auto-completion">Default auto-completion<a class="headerlink" href="#default-auto-completion" title="Permanent link">&para;</a></h4>
 <p><div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
 
@@ -1081,32 +1078,29 @@ App or its subcommands as well.</p>
 </code></pre></div>
 <img alt="" src="/docs/v2/images/custom-bash-autocomplete.gif" /></p>
 <h4 id="enabling">Enabling<a class="headerlink" href="#enabling" title="Permanent link">&para;</a></h4>
-<p>To enable auto-completion for the current shell session, a bash script,
-<code>autocomplete/bash_autocomplete</code> is included in this repo.</p>
+<p>To enable auto-completion for your application in the current shell session, you can use the <code>autocomplete/bash_autocomplete</code> script provided in the <code>aperturerobotics/cli</code> repository.</p>
 <blockquote>
 <p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/26a0.svg" title=":warning:" /> The <code>bash-completion</code> package or equivalent that provides the
 <code>_get_comp_words_by_ref</code> function for the target platform must be installed and
 initialized for this completion script to work correctly.</p>
 </blockquote>
-<p>To use <code>autocomplete/bash_autocomplete</code> set an environment variable named <code>PROG</code>
-to the name of your program and then <code>source</code> the
-<code>autocomplete/bash_autocomplete</code> file.</p>
+<p>First, set the <code>PROG</code> environment variable to the name of your compiled application binary. Then, <code>source</code> the <code>autocomplete/bash_autocomplete</code> script:</p>
 <p>For example, if your cli program is called <code>myprogram</code>:</p>
 <div class="highlight"><pre><span></span><code>$ PROG=myprogram source path/to/cli/autocomplete/bash_autocomplete
 </code></pre></div>
 <p>Auto-completion is now enabled for the current shell, but will not persist into
 a new shell.</p>
 <h4 id="distribution-and-persistent-autocompletion">Distribution and Persistent Autocompletion<a class="headerlink" href="#distribution-and-persistent-autocompletion" title="Permanent link">&para;</a></h4>
-<p>Copy <code>autocomplete/bash_autocomplete</code> into <code>/etc/bash_completion.d/</code> and rename
-it to the name of the program you wish to add autocomplete support for (or
-automatically install it there if you are distributing a package). Don't forget
-to source the file or restart your shell to activate the auto-completion.</p>
+<p>To make autocompletion persistent across shell sessions, you have a few options:</p>
+<ol>
+<li><strong>System-wide Installation:</strong> Copy <code>autocomplete/bash_autocomplete</code> to <code>/etc/bash_completion.d/</code> and rename it to match your program's name (e.g., <code>/etc/bash_completion.d/myprogram</code>). This is common when distributing packages. Users may need to restart their shell or source the file manually (<code>source /etc/bash_completion.d/&lt;myprogram&gt;</code>) for the changes to take effect immediately.</li>
+</ol>
 <div class="highlight"><pre><span></span><code>$ sudo cp path/to/autocomplete/bash_autocomplete /etc/bash_completion.d/&lt;myprogram&gt;
 $ source /etc/bash_completion.d/&lt;myprogram&gt;
 </code></pre></div>
-<p>Alternatively, you can just document that users should <code>source</code> the generic
-<code>autocomplete/bash_autocomplete</code> and set <code>$PROG</code> within their bash configuration
-file, adding these lines:</p>
+<ol>
+<li><strong>User Configuration:</strong> Instruct users to add the following lines to their shell configuration file (e.g., <code>~/.bashrc</code> or <code>~/.bash_profile</code>), ensuring they replace <code>&lt;myprogram&gt;</code> with the actual program name and <code>path/to/cli</code> with the correct path to the script:</li>
+</ol>
 <div class="highlight"><pre><span></span><code>$ PROG=&lt;myprogram&gt;
 $ source path/to/cli/autocomplete/bash_autocomplete
 </code></pre></div>
@@ -1197,7 +1191,7 @@ or <code>notepad $profile</code>) and add the line:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 1, 2025 21:40:22">April 1, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 2, 2025 04:55:42">April 2, 2025</span>
   </span>
 
     

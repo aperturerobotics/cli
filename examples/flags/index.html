@@ -567,7 +567,7 @@
         <li class="md-nav__item">
   <a href="#values-from-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Values from files
+      Values from Files
     </span>
   </a>
   
@@ -585,7 +585,7 @@
         <li class="md-nav__item">
   <a href="#default-values-for-help-output" class="md-nav__link">
     <span class="md-ellipsis">
-      Default Values for help output
+      Default Values for Help Output
     </span>
   </a>
   
@@ -936,7 +936,7 @@
         <li class="md-nav__item">
   <a href="#values-from-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Values from files
+      Values from Files
     </span>
   </a>
   
@@ -954,7 +954,7 @@
         <li class="md-nav__item">
   <a href="#default-values-for-help-output" class="md-nav__link">
     <span class="md-ellipsis">
-      Default Values for help output
+      Default Values for Help Output
     </span>
   </a>
   
@@ -999,7 +999,7 @@
 
   <h1>Flags</h1>
 
-<p>Setting and querying flags is simple.</p>
+<p>Flags provide ways for users to modify the behavior of your command-line application. Defining and accessing flags is straightforward.</p>
 <!-- {
   "output": "Hello Nefertiti"
 } -->
@@ -1041,9 +1041,7 @@
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>You can also set a destination variable for a flag, to which the content will be
-scanned. Note that if the <code>Value</code> is set for the flag, it will be shown as default,
-and destination will be set to this value before parsing flag on the command line.</p>
+<p>You can also bind a flag directly to a variable in your code using the <code>Destination</code> field. The flag's value will be automatically parsed and stored in the specified variable. If a default <code>Value</code> is also set for the flag, the <code>Destination</code> variable will be initialized to this default before command-line arguments are parsed.</p>
 <!-- {
   "output": "Hello someone"
 } -->
@@ -1088,10 +1086,10 @@ and destination will be set to this value before parsing flag on the command lin
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>See full list of flags at https://pkg.go.dev/github.com/aperturerobotics/cli</p>
-<p>For bool flags you can specify the flag multiple times to get a count(e.g -v -v -v or -vvv)</p>
+<p>See the <a href="https://pkg.go.dev/github.com/aperturerobotics/cli">Go Reference</a> for a full list of available flag types.</p>
+<p>For boolean flags (<code>BoolFlag</code>), you can use the <code>Count</code> field to track how many times a flag is provided. This is useful for flags like <code>-v</code> for verbosity.</p>
 <blockquote>
-<p>If you want to support the <code>-vvv</code> flag, you need to set <code>App.UseShortOptionHandling</code>.</p>
+<p>Note: To support combining short boolean flags like <code>-vvv</code>, you must set <code>UseShortOptionHandling: true</code> on your <code>App</code> or <code>Command</code>. See the <a href="./combining-short-options/">Combining Short Options</a> example for details.</p>
 </blockquote>
 <!-- {
   "args": ["&#45;&#45;f", "&#45;&#45;f", "&#45;fff",  "&#45;f"],
@@ -1132,8 +1130,7 @@ and destination will be set to this value before parsing flag on the command lin
 <span class="p">}</span>
 </code></pre></div>
 <h4 id="placeholder-values">Placeholder Values<a class="headerlink" href="#placeholder-values" title="Permanent link">&para;</a></h4>
-<p>Sometimes it's useful to specify a flag's value within the usage string itself.
-Such placeholders are indicated with back quotes.</p>
+<p>You can indicate a placeholder for a flag's value directly within the <code>Usage</code> string. This helps clarify what kind of value the flag expects in the help output. Placeholders are denoted using backticks (<code>``</code>).</p>
 <p>For example this:</p>
 <!-- {
   "args": ["&#45;&#45;help"],
@@ -1170,8 +1167,7 @@ Such placeholders are indicated with back quotes.</p>
 <p>Note that only the first placeholder is used. Subsequent back-quoted words will
 be left as-is.</p>
 <h4 id="alternate-names">Alternate Names<a class="headerlink" href="#alternate-names" title="Permanent link">&para;</a></h4>
-<p>You can set alternate (or short) names for flags by providing a comma-delimited
-list for the <code>Name</code>. e.g.</p>
+<p>Flags can have multiple names, often a longer descriptive name and a shorter alias. You can define aliases using the <code>Aliases</code> field, which accepts a slice of strings.</p>
 <!-- {
   "args": ["&#45;&#45;help"],
   "output": "&#45;&#45;lang value, &#45;l value.*language for the greeting.*default: \"english\""
@@ -1189,8 +1185,8 @@ list for the <code>Name</code>. e.g.</p>
 <span class="w">    </span><span class="nx">app</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{</span>
 <span class="w">        </span><span class="nx">Flags</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">cli</span><span class="p">.</span><span class="nx">Flag</span><span class="p">{</span>
 <span class="w">            </span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">StringFlag</span><span class="p">{</span>
-<span class="w">                </span><span class="nx">Name</span><span class="p">:</span><span class="w">    </span><span class="s">&quot;lang&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nx">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;l&quot;</span><span class="p">},</span>
+<span class="w">                </span><span class="nx">Name</span><span class="p">:</span><span class="w">    </span><span class="s">&quot;lang&quot;</span><span class="p">,</span><span class="w">        </span><span class="c1">// Primary name</span>
+<span class="w">                </span><span class="nx">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;l&quot;</span><span class="p">},</span><span class="w"> </span><span class="c1">// Alternate names</span>
 <span class="w">                </span><span class="nx">Value</span><span class="p">:</span><span class="w">   </span><span class="s">&quot;english&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="nx">Usage</span><span class="p">:</span><span class="w">   </span><span class="s">&quot;language for the greeting&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="p">},</span>
@@ -1202,11 +1198,9 @@ list for the <code>Name</code>. e.g.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>That flag can then be set with <code>--lang spanish</code> or <code>-l spanish</code>. Note that
-giving two different forms of the same flag in the same command invocation is an
-error.</p>
+<p>That flag can then be set with <code>--lang spanish</code> or <code>-l spanish</code>. Providing both forms (e.g., <code>--lang spanish -l spanish</code>) in the same command invocation will result in an error.</p>
 <h4 id="multiple-values-per-single-flag">Multiple Values per Single Flag<a class="headerlink" href="#multiple-values-per-single-flag" title="Permanent link">&para;</a></h4>
-<p>Using a slice flag allows you to pass multiple values for a single flag; the values will be provided as a slice:</p>
+<p>Slice flags allow users to specify a flag multiple times, collecting all provided values into a slice. Available types include:</p>
 <ul>
 <li><code>Int64SliceFlag</code></li>
 <li><code>IntSliceFlag</code></li>
@@ -1244,7 +1238,7 @@ error.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>Multiple values need to be passed as separate, repeating flags, e.g. <code>--greeting Hello --greeting Hola</code>.</p>
+<p>To pass multiple values, the user repeats the flag, e.g., <code>--greeting Hello --greeting Hola</code>.</p>
 <h4 id="grouping">Grouping<a class="headerlink" href="#grouping" title="Permanent link">&para;</a></h4>
 <p>You can associate a category for each flag to group them together in the help output, e.g:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
@@ -1356,7 +1350,7 @@ or <code>CommandsByName</code> with <code>sort</code>.</p>
 --lang value, -l value  Language for the greeting (default: &quot;english&quot;)
 </code></pre></div>
 <h4 id="values-from-the-environment">Values from the Environment<a class="headerlink" href="#values-from-the-environment" title="Permanent link">&para;</a></h4>
-<p>You can also have the default value set from the environment via <code>EnvVars</code>.  e.g.</p>
+<p>You can specify environment variables that can provide default values for flags using the <code>EnvVars</code> field (a slice of strings).</p>
 <!-- {
   "args": ["&#45;&#45;help"],
   "output": "language for the greeting.*APP_LANG"
@@ -1388,8 +1382,7 @@ or <code>CommandsByName</code> with <code>sort</code>.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>If <code>EnvVars</code> contains more than one string, the first environment variable that
-resolves is used.</p>
+<p>If <code>EnvVars</code> contains multiple variable names, the library uses the value of the first environment variable found to be set.</p>
 <!-- {
   "args": ["&#45;&#45;help"],
   "output": "language for the greeting.*LEGACY_COMPAT_LANG.*APP_LANG.*LANG"
@@ -1421,9 +1414,9 @@ resolves is used.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>When <code>Value</code> is not set for the flag, but a matching environment variable is found, the value from the environment will be used in the generated docs as the default value.</p>
-<h4 id="values-from-files">Values from files<a class="headerlink" href="#values-from-files" title="Permanent link">&para;</a></h4>
-<p>You can also have the default value set from file via <code>FilePath</code>.  e.g.</p>
+<p>If a flag's <code>Value</code> field is not explicitly set, but a corresponding environment variable from <code>EnvVars</code> is found, the environment variable's value will be used as the default and shown in the help text.</p>
+<h4 id="values-from-files">Values from Files<a class="headerlink" href="#values-from-files" title="Permanent link">&para;</a></h4>
+<p>Similarly to environment variables, you can specify a file path from which to read a flag's default value using the <code>FilePath</code> field.</p>
 <!-- {
   "args": ["&#45;&#45;help"],
   "output": "password for the mysql database"
@@ -1454,11 +1447,9 @@ resolves is used.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>Note that default values set from the environment (e.g. <code>EnvVar</code>) take precedence over
-default values set from file (e.g. <code>FilePath</code>).</p>
+<p>Note that default values sourced from environment variables (<code>EnvVars</code>) take precedence over those sourced from files (<code>FilePath</code>). See the full precedence order below.</p>
 <h4 id="required-flags">Required Flags<a class="headerlink" href="#required-flags" title="Permanent link">&para;</a></h4>
-<p>You can make a flag required by setting the <code>Required</code> field to <code>true</code>. If a user
-does not provide a required flag, they will be shown an error message.</p>
+<p>You can enforce that a flag must be provided by the user by setting its <code>Required</code> field to <code>true</code>. If a required flag is missing, the application will print an error message and exit.</p>
 <p>Take for example this app that requires the <code>lang</code> flag:</p>
 <!-- {
   "error": "Required flag \"lang\" not set"
@@ -1501,10 +1492,8 @@ does not provide a required flag, they will be shown an error message.</p>
 <p>If the app is run without the <code>lang</code> flag, the user will see the following message</p>
 <div class="highlight"><pre><span></span><code>Required flag &quot;lang&quot; not set
 </code></pre></div>
-<h4 id="default-values-for-help-output">Default Values for help output<a class="headerlink" href="#default-values-for-help-output" title="Permanent link">&para;</a></h4>
-<p>Sometimes it's useful to specify a flag's default help-text value within the
-flag declaration. This can be useful if the default value for a flag is a
-computed value. The default value can be set via the <code>DefaultText</code> struct field.</p>
+<h4 id="default-values-for-help-output">Default Values for Help Output<a class="headerlink" href="#default-values-for-help-output" title="Permanent link">&para;</a></h4>
+<p>In cases where a flag's default value (<code>Value</code> field) is dynamic or complex to represent (e.g., a randomly generated port), you can specify custom text to display as the default in the help output using the <code>DefaultText</code> field. This text is purely for display purposes and doesn't affect the actual default value used by the application.</p>
 <p>For example this:</p>
 <!-- {
   "args": ["&#45;&#45;help"],
@@ -1540,16 +1529,15 @@ computed value. The default value can be set via the <code>DefaultText</code> st
 <div class="highlight"><pre><span></span><code>--port value  Use a randomized port (default: random)
 </code></pre></div>
 <h4 id="precedence">Precedence<a class="headerlink" href="#precedence" title="Permanent link">&para;</a></h4>
-<p>The precedence for flag value sources is as follows (highest to lowest):</p>
+<p>The order of precedence for determining a flag's value is as follows (from highest to lowest):</p>
 <ol>
-<li>Command line flag value from user</li>
-<li>Environment variable (if specified)</li>
-<li>Configuration file (if specified)</li>
-<li>Default defined on the flag</li>
+<li>Value provided on the command line by the user.</li>
+<li>Value from the first set environment variable listed in <code>EnvVars</code>.</li>
+<li>Value read from the file specified in <code>FilePath</code>.</li>
+<li>Default value specified in the <code>Value</code> field of the flag definition.</li>
 </ol>
 <h4 id="flag-actions">Flag Actions<a class="headerlink" href="#flag-actions" title="Permanent link">&para;</a></h4>
-<p>Handlers can be registered per flag which are triggered after a flag has been processed. 
-This can be used for a variety of purposes, one of which is flag validation</p>
+<p>You can attach an <code>Action</code> function directly to a flag definition. This function will be executed <em>after</em> the flag's value has been parsed from the command line, environment, or file. This is useful for performing validation or other logic specific to that flag. The action receives the <code>*cli.Context</code> and the parsed value of the flag.</p>
 <!-- {
   "args": ["&#45;&#45;port","70000"],
   "error": "Flag port value 70000 out of range[0-65535]"
@@ -1610,7 +1598,7 @@ This can be used for a variety of purposes, one of which is flag validation</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 1, 2025 21:40:22">April 1, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 2, 2025 04:55:42">April 2, 2025</span>
   </span>
 
     
