@@ -68,9 +68,9 @@ func (i *Uint64Slice) String() string {
 		v = make([]uint64, 0)
 	}
 	str := fmt.Sprintf("%d", v)
-	str = strings.Replace(str, " ", ", ", -1)
-	str = strings.Replace(str, "[", "{", -1)
-	str = strings.Replace(str, "]", "}", -1)
+	str = strings.ReplaceAll(str, " ", ", ")
+	str = strings.ReplaceAll(str, "[", "{")
+	str = strings.ReplaceAll(str, "]", "}")
 	return fmt.Sprintf("[]uint64%s", str)
 }
 

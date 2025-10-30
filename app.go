@@ -190,7 +190,7 @@ func (a *App) Setup() {
 		a.Action = helpCommand.Action
 	}
 
-	if a.Compiled == (time.Time{}) {
+	if a.Compiled.Equal(time.Time{}) {
 		a.Compiled = compileTime()
 	}
 

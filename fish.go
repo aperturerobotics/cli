@@ -121,23 +121,23 @@ func (a *App) prepareFishFlags(flags []Flag, previousCommands []string) []string
 		}
 
 		completion := &strings.Builder{}
-		completion.WriteString(fmt.Sprintf(
+		fmt.Fprintf(completion,
 			"complete -c %s -n '%s'",
 			a.Name,
 			a.fishSubcommandHelper(previousCommands),
-		))
+		)
 
 		fishAddFileFlag(f, completion)
 
 		for idx, opt := range flag.Names() {
 			if idx == 0 {
-				completion.WriteString(fmt.Sprintf(
+				fmt.Fprintf(completion,
 					" -l %s", strings.TrimSpace(opt),
-				))
+				)
 			} else {
-				completion.WriteString(fmt.Sprintf(
+				fmt.Fprintf(completion,
 					" -s %s", strings.TrimSpace(opt),
-				))
+				)
 
 			}
 		}
@@ -147,8 +147,8 @@ func (a *App) prepareFishFlags(flags []Flag, previousCommands []string) []string
 		}
 
 		if flag.GetUsage() != "" {
-			completion.WriteString(fmt.Sprintf(" -d '%s'",
-				escapeSingleQuotes(flag.GetUsage())))
+			fmt.Fprintf(completion, " -d '%s'",
+				escapeSingleQuotes(flag.GetUsage()))
 		}
 
 		completions = append(completions, completion.String())
@@ -192,5 +192,5 @@ func (a *App) fishSubcommandHelper(allCommands []string) string {
 }
 
 func escapeSingleQuotes(input string) string {
-	return strings.Replace(input, `'`, `\'`, -1)
+	return strings.ReplaceAll(input, `'`, `\'`)
 }

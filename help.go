@@ -382,7 +382,7 @@ func printHelpCustom(out io.Writer, templ string, data interface{}, customFuncs 
 		"versionTemplate":                   versionTemplate,
 		"visibleFlagCategoryTemplate":       visibleFlagCategoryTemplate,
 		"visibleFlagTemplate":               visibleFlagTemplate,
-		"visibleGlobalFlagCategoryTemplate": strings.Replace(visibleFlagCategoryTemplate, "OPTIONS", "GLOBAL OPTIONS", -1),
+		"visibleGlobalFlagCategoryTemplate": strings.ReplaceAll(visibleFlagCategoryTemplate, "OPTIONS", "GLOBAL OPTIONS"),
 		"authorsTemplate":                   authorsTemplate,
 		"visibleCommandCategoryTemplate":    visibleCommandCategoryTemplate,
 	}
@@ -482,7 +482,7 @@ func subtract(a, b int) int {
 
 func indent(spaces int, v string) string {
 	pad := strings.Repeat(" ", spaces)
-	return pad + strings.Replace(v, "\n", "\n"+pad, -1)
+	return pad + strings.ReplaceAll(v, "\n", "\n"+pad)
 }
 
 func nindent(spaces int, v string) string {
@@ -558,7 +558,7 @@ func offset(input string, fixed int) int {
 // to find that offset we find the length of all the rows and use the max
 // to calculate the offset
 func offsetCommands(cmds []*Command, fixed int) int {
-	var max int = 0
+	var max = 0
 	for _, cmd := range cmds {
 		s := strings.Join(cmd.Names(), ", ")
 		if len(s) > max {

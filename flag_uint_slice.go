@@ -79,9 +79,9 @@ func (i *UintSlice) String() string {
 		v = make([]uint, 0)
 	}
 	str := fmt.Sprintf("%d", v)
-	str = strings.Replace(str, " ", ", ", -1)
-	str = strings.Replace(str, "[", "{", -1)
-	str = strings.Replace(str, "]", "}", -1)
+	str = strings.ReplaceAll(str, " ", ", ")
+	str = strings.ReplaceAll(str, "[", "{")
+	str = strings.ReplaceAll(str, "]", "}")
 	return fmt.Sprintf("[]uint%s", str)
 }
 

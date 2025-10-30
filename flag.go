@@ -404,8 +404,8 @@ type separatorSpec struct {
 
 func (s separatorSpec) flagSplitMultiValues(val string) []string {
 	var (
-		disabled bool   = s.disabled
-		sep      string = s.sep
+		disabled = s.disabled
+		sep      = s.sep
 	)
 	if !s.customized {
 		disabled = disableSliceFlagSeparator

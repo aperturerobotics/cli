@@ -1,4 +1,4 @@
-github.com/aperturerobotics/common v0.21.2 h1:fqnPL5Oovpd8nDaNBYGiD1UpZhcH/JfpsS8gt5iBDyA=
-github.com/aperturerobotics/common v0.21.2/go.mod h1:FrecdNcsYvVS8RcWCR8FUkKFh+XmouFOYKHpBdMqqBA=
-github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 h1:gEOO8jv9F4OT7lGCjxCBTO/36wtF6j2nSip77qHd4x4=
-github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1/go.mod h1:Ohn+xnUBiLI6FVj/9LpzZWtj1/D6lUovWYBkxHVV3aM=
+github.com/aperturerobotics/common v0.22.12 h1:uSo+fDQg6xCoNI34Y7gueW1cW9Cy4d/2FQb/T006LZQ=
+github.com/aperturerobotics/common v0.22.12/go.mod h1:xMXHNN6oCvG0FfG1tY6+2Si7iWh1QfSSCSrqohFUeIk=
+github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 h1:FnBeRrxr7OU4VvAzt5X7s6266i6cSVkkFPS0TuXWbIg=
+github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342/go.mod h1:Ohn+xnUBiLI6FVj/9LpzZWtj1/D6lUovWYBkxHVV3aM=

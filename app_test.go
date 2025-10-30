@@ -2761,7 +2761,7 @@ func TestFlagAction(t *testing.T) {
 					if v[0] == "err" {
 						return fmt.Errorf("error string slice")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2771,7 +2771,7 @@ func TestFlagAction(t *testing.T) {
 					if !v {
 						return fmt.Errorf("value is false")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%t ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%t ", v)
 					return err
 				},
 			},
@@ -2801,7 +2801,7 @@ func TestFlagAction(t *testing.T) {
 					if len(v) > 0 && v[0] < 0 {
 						return fmt.Errorf("invalid float64 slice")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2817,7 +2817,7 @@ func TestFlagAction(t *testing.T) {
 						}
 					}
 
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2827,7 +2827,7 @@ func TestFlagAction(t *testing.T) {
 					if v < 0 {
 						return fmt.Errorf("negative int")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2837,7 +2837,7 @@ func TestFlagAction(t *testing.T) {
 					if len(v) > 0 && v[0] < 0 {
 						return fmt.Errorf("invalid int slice")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2847,7 +2847,7 @@ func TestFlagAction(t *testing.T) {
 					if v < 0 {
 						return fmt.Errorf("negative int64")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2857,7 +2857,7 @@ func TestFlagAction(t *testing.T) {
 					if len(v) > 0 && v[0] < 0 {
 						return fmt.Errorf("invalid int64 slice")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2867,7 +2867,7 @@ func TestFlagAction(t *testing.T) {
 					if v == "" {
 						return fmt.Errorf("empty path")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2888,7 +2888,7 @@ func TestFlagAction(t *testing.T) {
 					if v == 0 {
 						return fmt.Errorf("zero uint")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2898,7 +2898,7 @@ func TestFlagAction(t *testing.T) {
 					if len(v) > 0 && v[0] == 0 {
 						return fmt.Errorf("invalid uint slice")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2908,7 +2908,7 @@ func TestFlagAction(t *testing.T) {
 					if v == 0 {
 						return fmt.Errorf("zero uint64")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
@@ -2918,7 +2918,7 @@ func TestFlagAction(t *testing.T) {
 					if len(v) > 0 && v[0] == 0 {
 						return fmt.Errorf("invalid uint64 slice")
 					}
-					_, err := c.App.Writer.Write([]byte(fmt.Sprintf("%v ", v)))
+					_, err := fmt.Fprintf(c.App.Writer, "%v ", v)
 					return err
 				},
 			},
