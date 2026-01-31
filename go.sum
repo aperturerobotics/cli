@@ -1,4 +1,2 @@
-github.com/aperturerobotics/common v0.22.12 h1:uSo+fDQg6xCoNI34Y7gueW1cW9Cy4d/2FQb/T006LZQ=
-github.com/aperturerobotics/common v0.22.12/go.mod h1:xMXHNN6oCvG0FfG1tY6+2Si7iWh1QfSSCSrqohFUeIk=
 github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 h1:FnBeRrxr7OU4VvAzt5X7s6266i6cSVkkFPS0TuXWbIg=
 github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342/go.mod h1:Ohn+xnUBiLI6FVj/9LpzZWtj1/D6lUovWYBkxHVV3aM=

@@ -1,6 +1,6 @@
 module github.com/aperturerobotics/cli/cmd/urfave-cli-genflags
 
-go 1.24.0
+go 1.25
 
 replace github.com/aperturerobotics/cli => ../../
 
@@ -10,7 +10,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require (
-	github.com/aperturerobotics/common v0.21.2 // indirect
-	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
-)
+require github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 // indirect
