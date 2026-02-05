@@ -5,7 +5,7 @@ go 1.25
 replace github.com/aperturerobotics/cli => ../../
 
 require (
-	github.com/aperturerobotics/cli v1.0.2-0.20260131035933-6db6a670406d
+	github.com/aperturerobotics/cli v1.1.0
 	golang.org/x/text v0.33.0
 	gopkg.in/yaml.v3 v3.0.1
 )
