@@ -82,7 +82,7 @@ func (i *Int64Slice) Value() []int64 {
 }
 
 // Get returns the slice of ints set by this flag
-func (i *Int64Slice) Get() interface{} {
+func (i *Int64Slice) Get() any {
 	return *i
 }
 

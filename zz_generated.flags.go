@@ -75,7 +75,7 @@ type GenericFlag struct {
 
 	TakesFile bool
 
-	Action func(*Context, interface{}) error
+	Action func(*Context, any) error
 }
 
 // String returns a readable representation of this value (for usage defaults)

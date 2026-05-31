@@ -176,7 +176,7 @@ func TestFlagsFromEnv(t *testing.T) {
 
 	var flagTests = []struct {
 		input     string
-		output    interface{}
+		output    any
 		flag      Flag
 		errRegexp string
 	}{
@@ -816,7 +816,6 @@ func TestStringSliceFlag_MatchStringFlagBehavior(t *testing.T) {
 		" asd ", // leading and tailing space
 	}
 	for testNum, value := range values {
-		value := value
 		t.Run(fmt.Sprintf("%d", testNum), func(t *testing.T) {
 			t.Parallel()
 
@@ -857,7 +856,6 @@ func TestStringSliceFlag_TrimSpace(t *testing.T) {
 		{" asd ", "asd"},
 	}
 	for testNum, tt := range tests {
-		tt := tt
 		t.Run(fmt.Sprintf("%d", testNum), func(t *testing.T) {
 			t.Parallel()
 
@@ -2971,7 +2969,7 @@ func (p *Parser) String() string {
 	return fmt.Sprintf("%s,%s", p[0], p[1])
 }
 
-func (p *Parser) Get() interface{} {
+func (p *Parser) Get() any {
 	return p
 }
 

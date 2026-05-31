@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -97,7 +98,7 @@ type App struct {
 	// is used as the default behavior.
 	ExitErrHandler ExitErrHandlerFunc
 	// Other custom info
-	Metadata map[string]interface{}
+	Metadata map[string]any
 	// Carries a function which returns app specific info.
 	ExtraInfo func() map[string]string
 	// CustomAppHelpTemplate the text template for app help topic.
@@ -259,7 +260,7 @@ func (a *App) Setup() {
 	a.flagCategories = newFlagCategoriesFromFlags(a.Flags)
 
 	if a.Metadata == nil {
-		a.Metadata = make(map[string]interface{})
+		a.Metadata = make(map[string]any)
 	}
 }
 
@@ -469,13 +470,7 @@ func (a *App) argsWithDefaultCommand(oldArgs Args) Args {
 
 func runFlagActions(c *Context, fs []Flag) error {
 	for _, f := range fs {
-		isSet := false
-		for _, name := range f.Names() {
-			if c.IsSet(name) {
-				isSet = true
-				break
-			}
-		}
+		isSet := slices.ContainsFunc(f.Names(), c.IsSet)
 		if isSet {
 			if af, ok := f.(ActionableFlag); ok {
 				if err := af.RunAction(c); err != nil {
@@ -506,7 +501,7 @@ func (a *Author) String() string {
 // HandleAction attempts to figure out which Action signature was used.  If
 // it's an ActionFunc or a func with the legacy signature for Action, the func
 // is run!
-func HandleAction(action interface{}, cCtx *Context) (err error) {
+func HandleAction(action any, cCtx *Context) (err error) {
 	switch a := action.(type) {
 	case ActionFunc:
 		return a(cCtx)
@@ -521,13 +516,7 @@ func HandleAction(action interface{}, cCtx *Context) (err error) {
 }
 
 func checkStringSliceIncludes(want string, sSlice []string) bool {
-	found := false
-	for _, s := range sSlice {
-		if want == s {
-			found = true
-			break
-		}
-	}
+	found := slices.Contains(sSlice, want)
 
 	return found
 }

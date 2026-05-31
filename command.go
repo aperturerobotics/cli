@@ -396,13 +396,7 @@ func (c *Command) appendFlag(fl Flag) {
 }
 
 func hasCommand(commands []*Command, command *Command) bool {
-	for _, existing := range commands {
-		if command == existing {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(commands, command)
 }
 
 func checkDuplicatedCmds(parent *Command) error {

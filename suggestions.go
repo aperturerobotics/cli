@@ -1,5 +1,4 @@
 //go:build !urfave_cli_no_suggest
-// +build !urfave_cli_no_suggest
 
 package cli
 

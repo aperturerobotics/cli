@@ -86,7 +86,7 @@ func (i *Uint64Slice) Value() []uint64 {
 }
 
 // Get returns the slice of ints set by this flag
-func (i *Uint64Slice) Get() interface{} {
+func (i *Uint64Slice) Get() any {
 	return *i
 }
 
@@ -203,16 +203,11 @@ func (f *Uint64SliceFlag) RunAction(c *Context) error {
 // nil if not found
 func (cCtx *Context) Uint64Slice(name string) []uint64 {
 	if fs := cCtx.lookupFlagSet(name); fs != nil {
-		return lookupUint64Slice(name, fs)
-	}
-	return nil
-}
-
-func lookupUint64Slice(name string, set *flag.FlagSet) []uint64 {
-	f := set.Lookup(name)
-	if f != nil {
-		if slice, ok := unwrapFlagValue(f.Value).(*Uint64Slice); ok {
-			return slice.Value()
+		f := fs.Lookup(name)
+		if f != nil {
+			if slice, ok := unwrapFlagValue(f.Value).(*Uint64Slice); ok {
+				return slice.Value()
+			}
 		}
 	}
 	return nil

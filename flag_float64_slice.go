@@ -81,7 +81,7 @@ func (f *Float64Slice) Value() []float64 {
 }
 
 // Get returns the slice of float64s set by this flag
-func (f *Float64Slice) Get() interface{} {
+func (f *Float64Slice) Get() any {
 	return *f
 }
 

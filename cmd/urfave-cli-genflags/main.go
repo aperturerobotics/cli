@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 	"syscall"
 	"text/template"
@@ -240,7 +240,7 @@ func (gfs *Spec) SortedFlagTypes() []*FlagType {
 		typeNames = append(typeNames, name)
 	}
 
-	sort.Strings(typeNames)
+	slices.Sort(typeNames)
 
 	ret := make([]*FlagType, len(typeNames))
 

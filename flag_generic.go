@@ -101,7 +101,7 @@ func (f *GenericFlag) Apply(set *flag.FlagSet) error {
 }
 
 // Get returns the flag’s value in the given Context.
-func (f *GenericFlag) Get(ctx *Context) interface{} {
+func (f *GenericFlag) Get(ctx *Context) any {
 	return ctx.Generic(f.Name)
 }
 
@@ -116,14 +116,14 @@ func (f *GenericFlag) RunAction(c *Context) error {
 
 // Generic looks up the value of a local GenericFlag, returns
 // nil if not found
-func (cCtx *Context) Generic(name string) interface{} {
+func (cCtx *Context) Generic(name string) any {
 	if fs := cCtx.lookupFlagSet(name); fs != nil {
 		return lookupGeneric(name, fs)
 	}
 	return nil
 }
 
-func lookupGeneric(name string, set *flag.FlagSet) interface{} {
+func lookupGeneric(name string, set *flag.FlagSet) any {
 	if f := set.Lookup(name); f != nil {
 		return f.Value
 	}

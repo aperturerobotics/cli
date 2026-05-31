@@ -89,7 +89,7 @@ type exitError struct {
 // NewExitError calls Exit to create a new ExitCoder.
 //
 // Deprecated: This function is a duplicate of Exit and will eventually be removed.
-func NewExitError(message interface{}, exitCode int) ExitCoder {
+func NewExitError(message any, exitCode int) ExitCoder {
 	return Exit(message, exitCode)
 }
 
@@ -100,7 +100,7 @@ func NewExitError(message interface{}, exitCode int) ExitCoder {
 // having to call os.Exit manually. During testing, this behavior can be avoided
 // by overriding the ExitErrHandler function on an App or the package-global
 // OsExiter function.
-func Exit(message interface{}, exitCode int) ExitCoder {
+func Exit(message any, exitCode int) ExitCoder {
 	var err error
 
 	switch e := message.(type) {

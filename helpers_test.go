@@ -10,7 +10,7 @@ func init() {
 	_ = os.Setenv("CLI_TEMPLATE_REPANIC", "1")
 }
 
-func expect(t *testing.T, a interface{}, b interface{}) {
+func expect(t *testing.T, a any, b any) {
 	t.Helper()
 
 	if !reflect.DeepEqual(a, b) {
@@ -18,7 +18,7 @@ func expect(t *testing.T, a interface{}, b interface{}) {
 	}
 }
 
-func expectNotEqual(t *testing.T, a interface{}, b interface{}) {
+func expectNotEqual(t *testing.T, a any, b any) {
 	t.Helper()
 
 	if reflect.DeepEqual(a, b) {

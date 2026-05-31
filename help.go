@@ -3,7 +3,9 @@ package cli
 import (
 	"fmt"
 	"io"
+	"maps"
 	"os"
+	"slices"
 	"strings"
 	"text/tabwriter"
 	"text/template"
@@ -85,10 +87,10 @@ var helpCommand = &Command{
 }
 
 // Prints help for the App or Command
-type helpPrinter func(w io.Writer, templ string, data interface{})
+type helpPrinter func(w io.Writer, templ string, data any)
 
 // Prints help for the App or Command with custom template function.
-type helpPrinterCustom func(w io.Writer, templ string, data interface{}, customFunc map[string]interface{})
+type helpPrinterCustom func(w io.Writer, templ string, data any, customFunc map[string]any)
 
 // HelpPrinter is a function that writes the help output. If not set explicitly,
 // this calls HelpPrinterCustom using only the default template functions.
@@ -130,8 +132,8 @@ func ShowAppHelp(cCtx *Context) error {
 		return nil
 	}
 
-	customAppData := func() map[string]interface{} {
-		return map[string]interface{}{
+	customAppData := func() map[string]any {
+		return map[string]any{
 			"ExtraInfo": cCtx.App.ExtraInfo,
 		}
 	}
@@ -163,17 +165,12 @@ func printCommandSuggestions(commands []*Command, writer io.Writer) {
 }
 
 func cliArgContains(flagName string) bool {
-	for _, name := range strings.Split(flagName, ",") {
+	for name := range strings.SplitSeq(flagName, ",") {
 		name = strings.TrimSpace(name)
-		count := utf8.RuneCountInString(name)
-		if count > 2 {
-			count = 2
-		}
+		count := min(utf8.RuneCountInString(name), 2)
 		flag := fmt.Sprintf("%s%s", strings.Repeat("-", count), name)
-		for _, a := range os.Args {
-			if a == flag {
-				return true
-			}
+		if slices.Contains(os.Args, flag) {
+			return true
 		}
 	}
 	return false
@@ -189,10 +186,9 @@ func printFlagSuggestions(lastArg string, flags []Flag, writer io.Writer) {
 		for _, name := range flag.Names() {
 			name = strings.TrimSpace(name)
 			// this will get total count utf8 letters in flag name
-			count := utf8.RuneCountInString(name)
-			if count > 2 {
-				count = 2 // reuse this count to generate single - or -- in flag completion
-			}
+			count := min(utf8.RuneCountInString(name),
+				// reuse this count to generate single - or -- in flag completion
+				2)
 			// if flag name has more than one utf8 letter and last argument in cli has -- prefix then
 			// skip flag completion for short flags example -v or -x
 			if strings.HasPrefix(lastArg, "--") && count == 1 {
@@ -342,7 +338,7 @@ func ShowCommandCompletions(ctx *Context, command string) {
 //
 // The customFuncs map will be combined with a default template.FuncMap to
 // allow using arbitrary functions in template rendering.
-func printHelpCustom(out io.Writer, templ string, data interface{}, customFuncs map[string]interface{}) {
+func printHelpCustom(out io.Writer, templ string, data any, customFuncs map[string]any) {
 	const maxLineLength = 10000
 
 	funcMap := template.FuncMap{
@@ -367,9 +363,7 @@ func printHelpCustom(out io.Writer, templ string, data interface{}, customFuncs 
 		}
 	}
 
-	for key, value := range customFuncs {
-		funcMap[key] = value
-	}
+	maps.Copy(funcMap, customFuncs)
 
 	w := tabwriter.NewWriter(out, 1, 8, 2, ' ', 0)
 	t := template.Must(template.New("help").Funcs(funcMap).Parse(templ))
@@ -406,7 +400,7 @@ func printHelpCustom(out io.Writer, templ string, data interface{}, customFuncs 
 	_ = w.Flush()
 }
 
-func printHelp(out io.Writer, templ string, data interface{}) {
+func printHelp(out io.Writer, templ string, data any) {
 	HelpPrinterCustom(out, templ, data, nil)
 }
 
@@ -424,13 +418,7 @@ func checkHelp(cCtx *Context) bool {
 	if HelpFlag == nil {
 		return false
 	}
-	found := false
-	for _, name := range HelpFlag.Names() {
-		if cCtx.Bool(name) {
-			found = true
-			break
-		}
-	}
+	found := slices.ContainsFunc(HelpFlag.Names(), cCtx.Bool)
 
 	return found
 }
@@ -447,13 +435,8 @@ func checkShellCompleteFlag(a *App, arguments []string) (bool, []string) {
 		return false, arguments
 	}
 
-	for _, arg := range arguments {
-		// If arguments include "--", shell completion is disabled
-		// because after "--" only positional arguments are accepted.
-		// https://unix.stackexchange.com/a/11382
-		if arg == "--" {
-			return false, arguments
-		}
+	if slices.Contains(arguments, "--") {
+		return false, arguments
 	}
 
 	return true, arguments[:pos]

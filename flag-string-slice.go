@@ -76,7 +76,7 @@ func (s *StringSlice) Value() []string {
 }
 
 // Get returns the slice of strings set by this flag
-func (s *StringSlice) Get() interface{} {
+func (s *StringSlice) Get() any {
 	return *s
 }
 
@@ -200,16 +200,11 @@ func (f *StringSliceFlag) RunAction(c *Context) error {
 // nil if not found
 func (cCtx *Context) StringSlice(name string) []string {
 	if fs := cCtx.lookupFlagSet(name); fs != nil {
-		return lookupStringSlice(name, fs)
-	}
-	return nil
-}
-
-func lookupStringSlice(name string, set *flag.FlagSet) []string {
-	f := set.Lookup(name)
-	if f != nil {
-		if slice, ok := unwrapFlagValue(f.Value).(*StringSlice); ok {
-			return slice.Value()
+		f := fs.Lookup(name)
+		if f != nil {
+			if slice, ok := unwrapFlagValue(f.Value).(*StringSlice); ok {
+				return slice.Value()
+			}
 		}
 	}
 	return nil

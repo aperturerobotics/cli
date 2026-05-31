@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"runtime"
+	"slices"
 	"strings"
 	"syscall"
 	"time"
@@ -81,7 +82,8 @@ func (f FlagsByName) Len() int {
 func (f FlagsByName) Less(i, j int) bool {
 	if len(f[j].Names()) == 0 {
 		return false
-	} else if len(f[i].Names()) == 0 {
+	}
+	if len(f[i].Names()) == 0 {
 		return true
 	}
 	return lexicographicLess(f[i].Names()[0], f[j].Names()[0])
@@ -262,21 +264,21 @@ func unquoteUsage(usage string) (string, string) {
 }
 
 func prefixedNames(names []string, placeholder string) string {
-	var prefixed string
+	var prefixed strings.Builder
 	for i, name := range names {
 		if name == "" {
 			continue
 		}
 
-		prefixed += prefixFor(name) + name
+		prefixed.WriteString(prefixFor(name) + name)
 		if placeholder != "" {
-			prefixed += " " + placeholder
+			prefixed.WriteString(" " + placeholder)
 		}
 		if i < len(names)-1 {
-			prefixed += ", "
+			prefixed.WriteString(", ")
 		}
 	}
-	return prefixed
+	return prefixed.String()
 }
 
 func envFormat(envVars []string, prefix, sep, suffix string) string {
@@ -322,10 +324,6 @@ func withFileHint(filePath, str string) string {
 	return str + fileText
 }
 
-func formatDefault(format string) string {
-	return " (default: " + format + ")"
-}
-
 func stringifyFlag(f Flag) string {
 	// enforce DocGeneration interface on flags to avoid reflection
 	df, ok := f.(DocGenerationFlag)
@@ -347,7 +345,7 @@ func stringifyFlag(f Flag) string {
 	// set
 	if bf, ok := f.(*BoolFlag); !ok || !bf.DisableDefaultText {
 		if s := df.GetDefaultText(); s != "" {
-			defaultValueString = fmt.Sprintf(formatDefault("%s"), s)
+			defaultValueString = fmt.Sprintf(" (default: %s)", s)
 		}
 	}
 
@@ -363,13 +361,7 @@ func stringifyFlag(f Flag) string {
 }
 
 func hasFlag(flags []Flag, fl Flag) bool {
-	for _, existing := range flags {
-		if fl == existing {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(flags, fl)
 }
 
 // Return the first value from a list of environment variables and files
@@ -382,7 +374,7 @@ func flagFromEnvOrFile(envVars []string, filePath string) (value string, fromWhe
 			return value, fmt.Sprintf("environment variable %q", envVar), true
 		}
 	}
-	for _, fileVar := range strings.Split(filePath, ",") {
+	for fileVar := range strings.SplitSeq(filePath, ",") {
 		if fileVar != "" {
 			if data, err := os.ReadFile(fileVar); err == nil {
 				return string(data), fmt.Sprintf("file %q", filePath), true

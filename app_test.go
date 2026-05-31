@@ -1650,7 +1650,7 @@ func TestAppHelpPrinter(t *testing.T) {
 	}()
 
 	var wasCalled = false
-	HelpPrinter = func(w io.Writer, template string, data interface{}) {
+	HelpPrinter = func(w io.Writer, template string, data any) {
 		wasCalled = true
 	}
 
@@ -2808,7 +2808,7 @@ func TestFlagAction(t *testing.T) {
 			&GenericFlag{
 				Name:  "f_generic",
 				Value: new(stringGeneric),
-				Action: func(c *Context, v interface{}) error {
+				Action: func(c *Context, v any) error {
 					fmt.Printf("%T %v\n", v, v)
 					switch vv := v.(type) {
 					case *stringGeneric:

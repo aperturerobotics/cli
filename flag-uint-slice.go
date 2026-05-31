@@ -4,27 +4,26 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"math"
 	"strconv"
 	"strings"
 )
 
-// IntSlice wraps []int to satisfy flag.Value
-type IntSlice struct {
-	slice      []int
+// UintSlice wraps []int to satisfy flag.Value
+type UintSlice struct {
+	slice      []uint
 	separator  separatorSpec
 	hasBeenSet bool
 }
 
-// NewIntSlice makes an *IntSlice with default values
-func NewIntSlice(defaults ...int) *IntSlice {
-	return &IntSlice{slice: append([]int{}, defaults...)}
+// NewUintSlice makes an *UintSlice with default values
+func NewUintSlice(defaults ...uint) *UintSlice {
+	return &UintSlice{slice: append([]uint{}, defaults...)}
 }
 
 // clone allocate a copy of self object
-func (i *IntSlice) clone() *IntSlice {
-	n := &IntSlice{
-		slice:      make([]int, len(i.slice)),
+func (i *UintSlice) clone() *UintSlice {
+	n := &UintSlice{
+		slice:      make([]uint, len(i.slice)),
 		hasBeenSet: i.hasBeenSet,
 	}
 	copy(n.slice, i.slice)
@@ -33,23 +32,19 @@ func (i *IntSlice) clone() *IntSlice {
 
 // TODO: Consistently have specific Set function for Int64 and Float64 ?
 // SetInt directly adds an integer to the list of values
-func (i *IntSlice) SetInt(value int) {
+func (i *UintSlice) SetUint(value uint) {
 	if !i.hasBeenSet {
-		i.slice = []int{}
+		i.slice = []uint{}
 		i.hasBeenSet = true
 	}
 
 	i.slice = append(i.slice, value)
 }
 
-func (i *IntSlice) WithSeparatorSpec(spec separatorSpec) {
-	i.separator = spec
-}
-
 // Set parses the value into an integer and appends it to the list of values
-func (i *IntSlice) Set(value string) error {
+func (i *UintSlice) Set(value string) error {
 	if !i.hasBeenSet {
-		i.slice = []int{}
+		i.slice = []uint{}
 		i.hasBeenSet = true
 	}
 
@@ -61,83 +56,86 @@ func (i *IntSlice) Set(value string) error {
 	}
 
 	for _, s := range i.separator.flagSplitMultiValues(value) {
-		tmp, err := strconv.ParseInt(strings.TrimSpace(s), 0, 64)
+		tmp, err := strconv.ParseUint(strings.TrimSpace(s), 0, 32)
 		if err != nil {
 			return err
 		}
 
-		// Check if the parsed value is within the range of int.
-		if tmp < math.MinInt || tmp > math.MaxInt {
-			return fmt.Errorf("value %q is out of range for int", s)
-		}
-
-		i.slice = append(i.slice, int(tmp))
+		i.slice = append(i.slice, uint(tmp))
 	}
 
 	return nil
 }
 
+func (i *UintSlice) WithSeparatorSpec(spec separatorSpec) {
+	i.separator = spec
+}
+
 // String returns a readable representation of this value (for usage defaults)
-func (i *IntSlice) String() string {
+func (i *UintSlice) String() string {
 	v := i.slice
 	if v == nil {
 		// treat nil the same as zero length non-nil
-		v = make([]int, 0)
+		v = make([]uint, 0)
 	}
-	return fmt.Sprintf("%#v", v)
+	str := fmt.Sprintf("%d", v)
+	str = strings.ReplaceAll(str, " ", ", ")
+	str = strings.ReplaceAll(str, "[", "{")
+	str = strings.ReplaceAll(str, "]", "}")
+	return fmt.Sprintf("[]uint%s", str)
 }
 
-// Serialize allows IntSlice to fulfill Serializer
-func (i *IntSlice) Serialize() string {
+// Serialize allows UintSlice to fulfill Serializer
+func (i *UintSlice) Serialize() string {
 	jsonBytes, _ := json.Marshal(i.slice)
 	return fmt.Sprintf("%s%s", slPfx, string(jsonBytes))
 }
 
 // Value returns the slice of ints set by this flag
-func (i *IntSlice) Value() []int {
+func (i *UintSlice) Value() []uint {
 	return i.slice
 }
 
 // Get returns the slice of ints set by this flag
-func (i *IntSlice) Get() interface{} {
+func (i *UintSlice) Get() any {
 	return *i
 }
 
 // String returns a readable representation of this value
 // (for usage defaults)
-func (f *IntSliceFlag) String() string {
+func (f *UintSliceFlag) String() string {
 	return FlagStringer(f)
 }
 
 // TakesValue returns true of the flag takes a value, otherwise false
-func (f *IntSliceFlag) TakesValue() bool {
+func (f *UintSliceFlag) TakesValue() bool {
 	return true
 }
 
 // GetUsage returns the usage string for the flag
-func (f *IntSliceFlag) GetUsage() string {
+func (f *UintSliceFlag) GetUsage() string {
 	return f.Usage
 }
 
 // GetCategory returns the category for the flag
-func (f *IntSliceFlag) GetCategory() string {
+func (f *UintSliceFlag) GetCategory() string {
 	return f.Category
 }
 
 // GetValue returns the flags value as string representation and an empty
 // string if the flag takes no value at all.
-func (f *IntSliceFlag) GetValue() string {
+func (f *UintSliceFlag) GetValue() string {
 	var defaultVals []string
 	if f.Value != nil && len(f.Value.Value()) > 0 {
 		for _, i := range f.Value.Value() {
-			defaultVals = append(defaultVals, strconv.Itoa(i))
+			defaultVals = append(defaultVals, strconv.FormatUint(uint64(i), 10))
 		}
 	}
 	return strings.Join(defaultVals, ", ")
 }
 
 // GetDefaultText returns the default text for this flag
-func (f *IntSliceFlag) GetDefaultText() string {
+func (f *UintSliceFlag) GetDefaultText() string {
 	if f.DefaultText != "" {
 		return f.DefaultText
 	}
@@ -145,39 +143,39 @@ func (f *IntSliceFlag) GetDefaultText() string {
 }
 
 // GetEnvVars returns the env vars for this flag
-func (f *IntSliceFlag) GetEnvVars() []string {
+func (f *UintSliceFlag) GetEnvVars() []string {
 	return f.EnvVars
 }
 
 // IsSliceFlag implements DocGenerationSliceFlag.
-func (f *IntSliceFlag) IsSliceFlag() bool {
+func (f *UintSliceFlag) IsSliceFlag() bool {
 	return true
 }
 
 // Apply populates the flag given the flag set and environment
-func (f *IntSliceFlag) Apply(set *flag.FlagSet) error {
+func (f *UintSliceFlag) Apply(set *flag.FlagSet) error {
 	// apply any default
 	if f.Destination != nil && f.Value != nil {
-		f.Destination.slice = make([]int, len(f.Value.slice))
+		f.Destination.slice = make([]uint, len(f.Value.slice))
 		copy(f.Destination.slice, f.Value.slice)
 	}
 
 	// resolve setValue (what we will assign to the set)
-	var setValue *IntSlice
+	var setValue *UintSlice
 	switch {
 	case f.Destination != nil:
 		setValue = f.Destination
 	case f.Value != nil:
 		setValue = f.Value.clone()
 	default:
-		setValue = new(IntSlice)
+		setValue = new(UintSlice)
 		setValue.WithSeparatorSpec(f.separator)
 	}
 
 	if val, source, ok := flagFromEnvOrFile(f.EnvVars, f.FilePath); ok && val != "" {
 		for _, s := range f.separator.flagSplitMultiValues(val) {
 			if err := setValue.Set(strings.TrimSpace(s)); err != nil {
-				return fmt.Errorf("could not parse %q as int slice value from %s for flag %s: %s", val, source, f.Name, err)
+				return fmt.Errorf("could not parse %q as uint slice value from %s for flag %s: %s", val, source, f.Name, err)
 			}
 		}
 
@@ -194,38 +192,33 @@ func (f *IntSliceFlag) Apply(set *flag.FlagSet) error {
 	return nil
 }
 
-func (f *IntSliceFlag) WithSeparatorSpec(spec separatorSpec) {
+func (f *UintSliceFlag) WithSeparatorSpec(spec separatorSpec) {
 	f.separator = spec
 }
 
 // Get returns the flag’s value in the given Context.
-func (f *IntSliceFlag) Get(ctx *Context) []int {
-	return ctx.IntSlice(f.Name)
+func (f *UintSliceFlag) Get(ctx *Context) []uint {
+	return ctx.UintSlice(f.Name)
 }
 
 // RunAction executes flag action if set
-func (f *IntSliceFlag) RunAction(c *Context) error {
+func (f *UintSliceFlag) RunAction(c *Context) error {
 	if f.Action != nil {
-		return f.Action(c, c.IntSlice(f.Name))
+		return f.Action(c, c.UintSlice(f.Name))
 	}
 
 	return nil
 }
 
-// IntSlice looks up the value of a local IntSliceFlag, returns
+// UintSlice looks up the value of a local UintSliceFlag, returns
 // nil if not found
-func (cCtx *Context) IntSlice(name string) []int {
+func (cCtx *Context) UintSlice(name string) []uint {
 	if fs := cCtx.lookupFlagSet(name); fs != nil {
-		return lookupIntSlice(name, fs)
-	}
-	return nil
-}
-
-func lookupIntSlice(name string, set *flag.FlagSet) []int {
-	f := set.Lookup(name)
-	if f != nil {
-		if slice, ok := unwrapFlagValue(f.Value).(*IntSlice); ok {
-			return slice.Value()
+		f := fs.Lookup(name)
+		if f != nil {
+			if slice, ok := unwrapFlagValue(f.Value).(*UintSlice); ok {
+				return slice.Value()
+			}
 		}
 	}
 	return nil
