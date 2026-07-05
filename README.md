@@ -2,7 +2,6 @@
 
 [![Run Tests](https://github.com/aperturerobotics/cli/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/aperturerobotics/cli/actions/workflows/tests.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/aperturerobotics/cli.svg)](https://pkg.go.dev/github.com/aperturerobotics/cli)
-[![Go Report Card](https://goreportcard.com/badge/github.com/aperturerobotics/cli)](https://goreportcard.com/report/github.com/aperturerobotics/cli)
 [![codecov](https://codecov.io/gh/aperturerobotics/cli/branch/main/graph/badge.svg)](https://codecov.io/gh/aperturerobotics/cli)
 
 `aperturerobotics/cli` is a **fork** of the popular `urfave/cli` v2 package for building command line apps in Go. The goal is to enable developers to write fast and distributable command line applications in an expressive way, while minimizing dependencies and maximizing compatibility.
