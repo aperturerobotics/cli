@@ -3249,3 +3249,51 @@ func TestApp_SubcommandFlagAfterArgument(t *testing.T) {
 	expect(t, name, "my-space")
 	expect(t, shared, true)
 }
+
+func TestApp_SubcommandAncestorFlags(t *testing.T) {
+	var name, state, format string
+	var verbose bool
+	app := &App{
+		Flags: []Flag{&StringFlag{Name: "state", Aliases: []string{"s"}}},
+		Commands: []*Command{{
+			Name: "space",
+			Flags: []Flag{
+				&StringFlag{Name: "output", Aliases: []string{"o"}},
+				&BoolFlag{Name: "verbose"},
+			},
+			Subcommands: []*Command{{
+				Name: "create",
+				Action: func(c *Context) error {
+					name = c.Args().First()
+					state = c.String("state")
+					format = c.String("output")
+					verbose = c.Bool("verbose")
+					expect(t, c.NArg(), 1)
+					return nil
+				},
+			}},
+		}},
+	}
+
+	err := app.Run([]string{"", "space", "create", "my-space", "--verbose", "-o", "json", "--s=dir"})
+
+	expect(t, err, nil)
+	expect(t, name, "my-space")
+	expect(t, state, "dir")
+	expect(t, format, "json")
+	expect(t, verbose, true)
+}
+
+func TestApp_SubcommandUndefinedFlag(t *testing.T) {
+	app := &App{
+		Writer: io.Discard,
+		Commands: []*Command{{
+			Name:        "space",
+			Subcommands: []*Command{{Name: "create", Action: func(*Context) error { return nil }}},
+		}},
+	}
+
+	err := app.Run([]string{"", "space", "create", "my-space", "--nope"})
+
+	expect(t, err, errors.New("flag provided but not defined: -nope"))
+}

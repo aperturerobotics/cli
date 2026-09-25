@@ -2,6 +2,7 @@ package cli
 
 import (
 	"flag"
+	"slices"
 	"strings"
 )
 
@@ -62,21 +63,43 @@ func parseIter(set *flag.FlagSet, ip iterativeParser, args []string, shellComple
 	}
 }
 
-// parseInterspersed parses flags placed before, between, or after the
-// positional arguments, as in "create name --flag". A "--" terminator keeps
-// every later argument positional. The positional arguments become set.Args().
-func parseInterspersed(set *flag.FlagSet, ip iterativeParser, args []string, shellComplete bool) error {
+// flagScope is an ancestor command's parsed flag set and its flag definitions.
+type flagScope struct {
+	set   *flag.FlagSet
+	flags []Flag
+}
+
+// parseArgs parses args into set and leaves the positional arguments in
+// set.Args().
+//
+// With interspersed set, flags may come before, between, or after the
+// positional arguments, as in "create name --flag", and a "--" terminator
+// keeps every later argument positional. Otherwise parsing stops at the first
+// positional argument, which names a subcommand with its own flags.
+//
+// A flag the command does not define is parsed into the nearest of ancestors
+// that defines it, so "parent child --parent-flag" sets the parent's flag.
+func parseArgs(set *flag.FlagSet, ip iterativeParser, args []string, interspersed bool, ancestors []flagScope, shellComplete bool) error {
 	var positional []string
 	for {
 		if err := parseIter(set, ip, args, shellComplete); err != nil {
-			return err
+			// The parser applied every flag before the undefined one.
+			rest, ok, ancestorErr := parseAncestorFlag(err, args, ancestors)
+			if ancestorErr != nil {
+				return ancestorErr
+			}
+			if !ok {
+				return err
+			}
+			args = rest
+			continue
 		}
 
 		// The parser stops at the first positional argument or after "--".
 		// The unparsed arguments are always a suffix of args.
 		rest := set.Args()
 		parsed := len(args) - len(rest)
-		if len(rest) == 0 || (parsed != 0 && args[parsed-1] == "--") {
+		if !interspersed || len(rest) == 0 || (parsed != 0 && args[parsed-1] == "--") {
 			positional = append(positional, rest...)
 			break
 		}
@@ -84,6 +107,63 @@ func parseInterspersed(set *flag.FlagSet, ip iterativeParser, args []string, she
 		args = rest[1:]
 	}
 	return set.Parse(append([]string{"--"}, positional...))
+}
+
+// parseAncestorFlag parses the flag err reports as undefined, with its value,
+// into the nearest ancestor scope that defines it. Returns the arguments after
+// the flag, or ok false when err names no flag an ancestor defines.
+func parseAncestorFlag(err error, args []string, ancestors []flagScope) ([]string, bool, error) {
+	name, nameErr := flagFromError(err)
+	if nameErr != nil {
+		return nil, false, nil
+	}
+	i := slices.IndexFunc(args, func(arg string) bool {
+		return flagArgName(arg) == name
+	})
+	if i < 0 {
+		return nil, false, nil
+	}
+	for _, scope := range ancestors {
+		f := scope.set.Lookup(name)
+		if f == nil {
+			continue
+		}
+
+		// Parse the flag alone, or with the next argument as its value.
+		n := 1
+		if !strings.Contains(args[i], "=") && !isBoolFlag(f) && i+1 < len(args) {
+			n = 2
+		}
+		scopeArgs := scope.set.Args()
+		if err := scope.set.Parse(args[i : i+n]); err != nil {
+			return nil, true, err
+		}
+		if err := scope.set.Parse(append([]string{"--"}, scopeArgs...)); err != nil {
+			return nil, true, err
+		}
+		if err := normalizeFlags(scope.flags, scope.set); err != nil {
+			return nil, true, err
+		}
+		return args[i+n:], true, nil
+	}
+	return nil, false, nil
+}
+
+// flagArgName returns the flag name an argument such as "--name=value" sets,
+// or "" when the argument is not a flag.
+func flagArgName(arg string) string {
+	if len(arg) < 2 || arg[0] != '-' {
+		return ""
+	}
+	name := strings.TrimPrefix(arg[1:], "-")
+	name, _, _ = strings.Cut(name, "=")
+	return name
+}
+
+// isBoolFlag reports whether the flag takes no value argument.
+func isBoolFlag(f *flag.Flag) bool {
+	bf, ok := f.Value.(interface{ IsBoolFlag() bool })
+	return ok && bf.IsBoolFlag()
 }
 
 const providedButNotDefinedErrMsg = "flag provided but not defined: -"

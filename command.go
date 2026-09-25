@@ -154,7 +154,7 @@ func (c *Command) Run(cCtx *Context, arguments ...string) (err error) {
 	}
 
 	a := args(arguments)
-	set, err := c.parseFlags(&a, cCtx.shellComplete)
+	set, err := c.parseFlags(&a, cCtx)
 	cCtx.flagSet = set
 
 	if checkCompletions(cCtx) {
@@ -315,7 +315,10 @@ func (c *Command) suggestFlagFromError(err error, command string) (string, error
 	return fmt.Sprintf(SuggestDidYouMeanTemplate, suggestion) + "\n\n", nil
 }
 
-func (c *Command) parseFlags(args Args, shellComplete bool) (*flag.FlagSet, error) {
+// parseFlags parses the command's arguments. A command without subcommands
+// accepts flags after its arguments, and a flag defined only by an ancestor
+// command sets the ancestor's flag.
+func (c *Command) parseFlags(args Args, cCtx *Context) (*flag.FlagSet, error) {
 	set, err := c.newFlagSet()
 	if err != nil {
 		return nil, err
@@ -325,11 +328,13 @@ func (c *Command) parseFlags(args Args, shellComplete bool) (*flag.FlagSet, erro
 		return set, set.Parse(append([]string{"--"}, args.Tail()...))
 	}
 
-	if c.hasSubcommands() {
-		err = parseIter(set, c, args.Tail(), shellComplete)
-	} else {
-		err = parseInterspersed(set, c, args.Tail(), shellComplete)
+	var ancestors []flagScope
+	for ctx := cCtx.parentContext; ctx != nil; ctx = ctx.parentContext {
+		if ctx.flagSet != nil && ctx.Command != nil {
+			ancestors = append(ancestors, flagScope{set: ctx.flagSet, flags: ctx.Command.Flags})
+		}
 	}
+	err = parseArgs(set, c, args.Tail(), !c.hasSubcommands(), ancestors, cCtx.shellComplete)
 	if err != nil {
 		return nil, err
 	}
