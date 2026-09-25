@@ -771,9 +771,7 @@ func TestApp_CommandWithFlagBeforeTerminator(t *testing.T) {
 	_ = app.Run([]string{"", "cmd", "--option", "my-option", "my-arg", "--", "--notARealFlag"})
 
 	expect(t, parsedOption, "my-option")
-	expect(t, args.Get(0), "my-arg")
-	expect(t, args.Get(1), "--")
-	expect(t, args.Get(2), "--notARealFlag")
+	expect(t, args.Slice(), []string{"my-arg", "--notARealFlag"})
 }
 
 func TestApp_CommandWithDash(t *testing.T) {
@@ -814,9 +812,7 @@ func TestApp_CommandWithNoFlagBeforeTerminator(t *testing.T) {
 
 	_ = app.Run([]string{"", "cmd", "my-arg", "--", "notAFlagAtAll"})
 
-	expect(t, args.Get(0), "my-arg")
-	expect(t, args.Get(1), "--")
-	expect(t, args.Get(2), "notAFlagAtAll")
+	expect(t, args.Slice(), []string{"my-arg", "notAFlagAtAll"})
 }
 
 func TestApp_SkipFlagParsing(t *testing.T) {
@@ -3226,4 +3222,30 @@ func TestDuplicateSubcommand(t *testing.T) {
 			expectNotEqual(t, err, nil)
 		}
 	}
+}
+
+func TestApp_SubcommandFlagAfterArgument(t *testing.T) {
+	var name string
+	var shared bool
+	app := &App{
+		Commands: []*Command{{
+			Name: "space",
+			Subcommands: []*Command{{
+				Name:  "create",
+				Flags: []Flag{&BoolFlag{Name: "shared"}},
+				Action: func(c *Context) error {
+					name = c.Args().First()
+					shared = c.Bool("shared")
+					expect(t, c.NArg(), 1)
+					return nil
+				},
+			}},
+		}},
+	}
+
+	err := app.Run([]string{"", "space", "create", "my-space", "--shared"})
+
+	expect(t, err, nil)
+	expect(t, name, "my-space")
+	expect(t, shared, true)
 }

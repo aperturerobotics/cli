@@ -325,7 +325,11 @@ func (c *Command) parseFlags(args Args, shellComplete bool) (*flag.FlagSet, erro
 		return set, set.Parse(append([]string{"--"}, args.Tail()...))
 	}
 
-	err = parseIter(set, c, args.Tail(), shellComplete)
+	if c.hasSubcommands() {
+		err = parseIter(set, c, args.Tail(), shellComplete)
+	} else {
+		err = parseInterspersed(set, c, args.Tail(), shellComplete)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -336,6 +340,17 @@ func (c *Command) parseFlags(args Args, shellComplete bool) (*flag.FlagSet, erro
 	}
 
 	return set, nil
+}
+
+// hasSubcommands reports whether the command has a subcommand other than
+// help, so its first argument may name a command with its own flags.
+func (c *Command) hasSubcommands() bool {
+	for _, sub := range c.Subcommands {
+		if sub != helpCommand {
+			return true
+		}
+	}
+	return false
 }
 
 // Names returns the names including short names and aliases.

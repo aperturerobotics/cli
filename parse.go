@@ -62,6 +62,30 @@ func parseIter(set *flag.FlagSet, ip iterativeParser, args []string, shellComple
 	}
 }
 
+// parseInterspersed parses flags placed before, between, or after the
+// positional arguments, as in "create name --flag". A "--" terminator keeps
+// every later argument positional. The positional arguments become set.Args().
+func parseInterspersed(set *flag.FlagSet, ip iterativeParser, args []string, shellComplete bool) error {
+	var positional []string
+	for {
+		if err := parseIter(set, ip, args, shellComplete); err != nil {
+			return err
+		}
+
+		// The parser stops at the first positional argument or after "--".
+		// The unparsed arguments are always a suffix of args.
+		rest := set.Args()
+		parsed := len(args) - len(rest)
+		if len(rest) == 0 || (parsed != 0 && args[parsed-1] == "--") {
+			positional = append(positional, rest...)
+			break
+		}
+		positional = append(positional, rest[0])
+		args = rest[1:]
+	}
+	return set.Parse(append([]string{"--"}, positional...))
+}
+
 const providedButNotDefinedErrMsg = "flag provided but not defined: -"
 
 // flagFromError tries to parse a provided flag from an error message. If the

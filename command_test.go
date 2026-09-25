@@ -20,10 +20,10 @@ func TestCommandFlagParsing(t *testing.T) {
 	}{
 		// Test normal "not ignoring flags" flow
 		{testArgs: []string{"test-cmd", "-break", "blah", "blah"}, skipFlagParsing: false, useShortOptionHandling: false, expectedErr: errors.New("flag provided but not defined: -break")},
-		{testArgs: []string{"test-cmd", "blah", "blah"}, skipFlagParsing: true, useShortOptionHandling: false, expectedErr: nil},   // Test SkipFlagParsing without any args that look like flags
-		{testArgs: []string{"test-cmd", "blah", "-break"}, skipFlagParsing: true, useShortOptionHandling: false, expectedErr: nil}, // Test SkipFlagParsing with random flag arg
-		{testArgs: []string{"test-cmd", "blah", "-help"}, skipFlagParsing: true, useShortOptionHandling: false, expectedErr: nil},  // Test SkipFlagParsing with "special" help flag arg
-		{testArgs: []string{"test-cmd", "blah", "-h"}, skipFlagParsing: false, useShortOptionHandling: true, expectedErr: nil},     // Test UseShortOptionHandling
+		{testArgs: []string{"test-cmd", "blah", "blah"}, skipFlagParsing: true, useShortOptionHandling: false, expectedErr: nil},        // Test SkipFlagParsing without any args that look like flags
+		{testArgs: []string{"test-cmd", "blah", "-break"}, skipFlagParsing: true, useShortOptionHandling: false, expectedErr: nil},      // Test SkipFlagParsing with random flag arg
+		{testArgs: []string{"test-cmd", "blah", "-help"}, skipFlagParsing: true, useShortOptionHandling: false, expectedErr: nil},       // Test SkipFlagParsing with "special" help flag arg
+		{testArgs: []string{"test-cmd", "blah", "-h"}, skipFlagParsing: false, useShortOptionHandling: true, expectedErr: flag.ErrHelp}, // Test a flag after an argument
 	}
 
 	for _, c := range cases {
@@ -68,9 +68,11 @@ func TestParseAndRunShortOpts(t *testing.T) {
 		{testArgs: args{"foo", "test", "-acf", "-invalid"}, expectedErr: errors.New("flag provided but not defined: -invalid"), expectedArgs: nil},
 		{testArgs: args{"foo", "test", "--invalid"}, expectedErr: errors.New("flag provided but not defined: -invalid"), expectedArgs: nil},
 		{testArgs: args{"foo", "test", "-acf", "--invalid"}, expectedErr: errors.New("flag provided but not defined: -invalid"), expectedArgs: nil},
-		{testArgs: args{"foo", "test", "-acf", "arg1", "-invalid"}, expectedErr: nil, expectedArgs: &args{"arg1", "-invalid"}},
-		{testArgs: args{"foo", "test", "-acf", "arg1", "--invalid"}, expectedErr: nil, expectedArgs: &args{"arg1", "--invalid"}},
-		{testArgs: args{"foo", "test", "-acfi", "not-arg", "arg1", "-invalid"}, expectedErr: nil, expectedArgs: &args{"arg1", "-invalid"}},
+		{testArgs: args{"foo", "test", "-acf", "arg1", "-invalid"}, expectedErr: errors.New("flag provided but not defined: -invalid"), expectedArgs: nil},
+		{testArgs: args{"foo", "test", "-acf", "arg1", "--invalid"}, expectedErr: errors.New("flag provided but not defined: -invalid"), expectedArgs: nil},
+		{testArgs: args{"foo", "test", "-acfi", "not-arg", "arg1", "-invalid"}, expectedErr: errors.New("flag provided but not defined: -invalid"), expectedArgs: nil},
+		{testArgs: args{"foo", "test", "arg1", "-ac", "arg2", "-i", "ivalue"}, expectedErr: nil, expectedArgs: &args{"arg1", "arg2"}},
+		{testArgs: args{"foo", "test", "-a", "arg1", "--", "-c", "--invalid"}, expectedErr: nil, expectedArgs: &args{"arg1", "-c", "--invalid"}},
 		{testArgs: args{"foo", "test", "-i", "ivalue"}, expectedErr: nil, expectedArgs: &args{}},
 		{testArgs: args{"foo", "test", "-i", "ivalue", "arg1"}, expectedErr: nil, expectedArgs: &args{"arg1"}},
 		{testArgs: args{"foo", "test", "-i"}, expectedErr: errors.New("flag needs an argument: -i"), expectedArgs: nil},
