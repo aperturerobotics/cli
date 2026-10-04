@@ -3297,3 +3297,27 @@ func TestApp_SubcommandUndefinedFlag(t *testing.T) {
 
 	expect(t, err, errors.New("flag provided but not defined: -nope"))
 }
+
+func TestApp_SubcommandAncestorFlagAfterAliasedFlag(t *testing.T) {
+	var state, logFile string
+	app := &App{
+		Flags: []Flag{
+			&StringFlag{Name: "state", Aliases: []string{"s"}},
+			&StringFlag{Name: "log-file", Aliases: []string{"l"}},
+		},
+		Commands: []*Command{{
+			Name: "serve",
+			Action: func(c *Context) error {
+				state = c.String("s")
+				logFile = c.String("l")
+				return nil
+			},
+		}},
+	}
+
+	err := app.Run([]string{"", "--state", "dir", "serve", "--log-file", "debug.log"})
+
+	expect(t, err, nil)
+	expect(t, state, "dir")
+	expect(t, logFile, "debug.log")
+}

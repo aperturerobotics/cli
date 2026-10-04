@@ -141,12 +141,29 @@ func parseAncestorFlag(err error, args []string, ancestors []flagScope) ([]strin
 		if err := scope.set.Parse(append([]string{"--"}, scopeArgs...)); err != nil {
 			return nil, true, err
 		}
-		if err := normalizeFlags(scope.flags, scope.set); err != nil {
-			return nil, true, err
-		}
+		copyFlagAliases(scope.flags, scope.set, name)
 		return args[i+n:], true, nil
 	}
 	return nil, false, nil
+}
+
+// copyFlagAliases copies the value of the flag set as name to its other names.
+// The scope's flags were normalized when it was parsed, so normalizing them
+// again would see both forms of an earlier flag as set.
+func copyFlagAliases(flags []Flag, set *flag.FlagSet, name string) {
+	for _, f := range flags {
+		names := f.Names()
+		if !slices.Contains(names, name) {
+			continue
+		}
+		ff := set.Lookup(name)
+		for _, alias := range names {
+			if alias != name {
+				copyFlag(alias, ff, set)
+			}
+		}
+		return
+	}
 }
 
 // flagArgName returns the flag name an argument such as "--name=value" sets,
