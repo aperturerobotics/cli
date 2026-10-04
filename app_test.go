@@ -3321,3 +3321,33 @@ func TestApp_SubcommandAncestorFlagAfterAliasedFlag(t *testing.T) {
 	expect(t, state, "dir")
 	expect(t, logFile, "debug.log")
 }
+
+func TestApp_BeforeSeesAncestorFlagAfterSubcommand(t *testing.T) {
+	var order []string
+	var logFile string
+	app := &App{
+		Flags: []Flag{&StringFlag{Name: "log-file"}},
+		Before: func(c *Context) error {
+			order = append(order, "root")
+			logFile = c.String("log-file")
+			return nil
+		},
+		Commands: []*Command{{
+			Name: "serve",
+			Before: func(*Context) error {
+				order = append(order, "serve")
+				return nil
+			},
+			Action: func(*Context) error {
+				order = append(order, "action")
+				return nil
+			},
+		}},
+	}
+
+	err := app.Run([]string{"", "serve", "--log-file", "debug.log"})
+
+	expect(t, err, nil)
+	expect(t, logFile, "debug.log")
+	expect(t, order, []string{"root", "serve", "action"})
+}
