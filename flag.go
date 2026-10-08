@@ -364,6 +364,18 @@ func hasFlag(flags []Flag, fl Flag) bool {
 	return slices.Contains(flags, fl)
 }
 
+// hasFlagNamed reports whether flags contains a flag with the given name or
+// alias. The dedup checks in appendFlag use this for the per-app help and
+// version flag copies, which differ by pointer from any flags a caller set.
+func hasFlagNamed(flags []Flag, name string) bool {
+	for _, fl := range flags {
+		if slices.Contains(fl.Names(), name) {
+			return true
+		}
+	}
+	return false
+}
+
 // Return the first value from a list of environment variables and files
 // (which may or may not exist), a description of where the value was found,
 // and a boolean which is true if a value was found.

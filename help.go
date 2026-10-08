@@ -254,7 +254,7 @@ func ShowCommandHelp(ctx *Context, command string) error {
 				c.Subcommands = append(c.Subcommands, helpCommandDontUse)
 			}
 			if !ctx.App.HideHelp && HelpFlag != nil {
-				c.appendFlag(HelpFlag)
+				c.appendFlag(ctx.App.helpFlag())
 			}
 			templ := c.CustomHelpTemplate
 			if templ == "" {
@@ -406,7 +406,7 @@ func printHelp(out io.Writer, templ string, data any) {
 
 func checkVersion(cCtx *Context) bool {
 	found := false
-	for _, name := range VersionFlag.Names() {
+	for _, name := range cCtx.App.versionFlag().Names() {
 		if cCtx.Bool(name) {
 			found = true
 		}
@@ -418,7 +418,7 @@ func checkHelp(cCtx *Context) bool {
 	if HelpFlag == nil {
 		return false
 	}
-	found := slices.ContainsFunc(HelpFlag.Names(), cCtx.Bool)
+	found := slices.ContainsFunc(cCtx.App.helpFlag().Names(), cCtx.Bool)
 
 	return found
 }

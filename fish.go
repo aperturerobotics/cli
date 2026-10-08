@@ -39,7 +39,7 @@ func (a *App) writeFishCompletionTemplate(w io.Writer) error {
 	if !a.HideHelp {
 		completions = append(
 			completions,
-			a.prepareFishFlags([]Flag{HelpFlag}, allCommands)...,
+			a.prepareFishFlags([]Flag{a.helpFlag()}, allCommands)...,
 		)
 	}
 
@@ -47,7 +47,7 @@ func (a *App) writeFishCompletionTemplate(w io.Writer) error {
 	if !a.HideVersion {
 		completions = append(
 			completions,
-			a.prepareFishFlags([]Flag{VersionFlag}, allCommands)...,
+			a.prepareFishFlags([]Flag{a.versionFlag()}, allCommands)...,
 		)
 	}
 
@@ -87,7 +87,7 @@ func (a *App) prepareFishCommands(commands []*Command, allCommands *[]string, pr
 		if !command.HideHelp {
 			completions = append(
 				completions,
-				a.prepareFishFlags([]Flag{HelpFlag}, command.Names())...,
+				a.prepareFishFlags([]Flag{a.helpFlag()}, command.Names())...,
 			)
 		}
 

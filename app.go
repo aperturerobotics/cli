@@ -243,12 +243,12 @@ func (a *App) Setup() {
 		}
 
 		if HelpFlag != nil {
-			a.appendFlag(HelpFlag)
+			a.appendFlag(a.helpFlag())
 		}
 	}
 
 	if !a.HideVersion {
-		a.appendFlag(VersionFlag)
+		a.appendFlag(a.versionFlag())
 	}
 
 	a.categories = newCommandCategories()
@@ -262,6 +262,26 @@ func (a *App) Setup() {
 	if a.Metadata == nil {
 		a.Metadata = make(map[string]any)
 	}
+}
+
+// helpFlag returns this app's copy of the built-in help flag. Apps share the
+// package-level HelpFlag, and each parse mutates the flag it applies, so every
+// app installs its own instance instead.
+func (a *App) helpFlag() Flag {
+	if h, ok := HelpFlag.(*BoolFlag); ok {
+		cp := *h
+		return &cp
+	}
+	return HelpFlag
+}
+
+// versionFlag returns this app's copy of the built-in version flag.
+func (a *App) versionFlag() Flag {
+	if h, ok := VersionFlag.(*BoolFlag); ok {
+		cp := *h
+		return &cp
+	}
+	return VersionFlag
 }
 
 func (a *App) newRootCommand() *Command {
@@ -438,7 +458,7 @@ func (a *App) VisibleFlags() []Flag {
 }
 
 func (a *App) appendFlag(fl Flag) {
-	if !hasFlag(a.Flags, fl) {
+	if !hasFlag(a.Flags, fl) && !hasFlagNamed(a.Flags, fl.Names()[0]) {
 		a.Flags = append(a.Flags, fl)
 	}
 }

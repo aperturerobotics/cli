@@ -124,7 +124,7 @@ func (c *Command) setup(ctx *Context) {
 		}
 	}
 	if !c.HideHelp && HelpFlag != nil {
-		c.appendFlag(HelpFlag)
+		c.appendFlag(ctx.App.helpFlag())
 	}
 
 	// Inherit app options and categorize the subcommands for help.
@@ -442,7 +442,7 @@ func (c *Command) VisibleFlags() []Flag {
 
 // appendFlag adds fl unless the command already has it.
 func (c *Command) appendFlag(fl Flag) {
-	if !hasFlag(c.Flags, fl) {
+	if !hasFlag(c.Flags, fl) && !hasFlagNamed(c.Flags, fl.Names()[0]) {
 		c.Flags = append(c.Flags, fl)
 	}
 }
