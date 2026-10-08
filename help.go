@@ -17,15 +17,8 @@ const (
 	helpAlias = "h"
 )
 
-// this instance is to avoid recursion in the ShowCommandHelp which can
-// add a help command again
-var helpCommandDontUse = &Command{
-	Name:      helpName,
-	Aliases:   []string{helpAlias},
-	Usage:     "Shows a list of commands or help for one command",
-	ArgsUsage: "[command]",
-}
-
+// helpCommand is the template for the help command. Each App runs its own copy,
+// since command setup writes to the subcommands it installs.
 var helpCommand = &Command{
 	Name:      helpName,
 	Aliases:   []string{helpAlias},
@@ -251,7 +244,7 @@ func ShowCommandHelp(ctx *Context, command string) error {
 	for _, c := range commands {
 		if c.HasName(command) {
 			if !ctx.App.HideHelpCommand && !c.HasName(helpName) && len(c.Subcommands) != 0 && c.Command(helpName) == nil {
-				c.Subcommands = append(c.Subcommands, helpCommandDontUse)
+				c.Subcommands = append(c.Subcommands, ctx.App.helpCmd)
 			}
 			if !ctx.App.HideHelp && HelpFlag != nil {
 				c.appendFlag(ctx.App.helpFlag())

@@ -650,14 +650,14 @@ func TestApp_RunDefaultCommandWithFlags(t *testing.T) {
 }
 
 func TestApp_FlagsFromExtPackage(t *testing.T) {
+	// Register the ext package flag on a fresh global flag set, and restore
+	// the original so the testing package's flags survive a repeated run.
+	orig := flag.CommandLine
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+	defer func() { flag.CommandLine = orig }()
 
 	var someint int
 	flag.IntVar(&someint, "epflag", 2, "ext package flag usage")
-
-	// Based on source code we can reset the global flag parsing this way
-	defer func() {
-		flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-	}()
 
 	a := &App{
 		AllowExtFlags: true,

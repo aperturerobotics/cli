@@ -118,9 +118,9 @@ func (c *Command) Command(name string) *Command {
 // fills their help names before the command parses its arguments.
 func (c *Command) setup(ctx *Context) {
 	// Add the built-in help command and flag.
-	if c.Command(helpCommand.Name) == nil && !c.HideHelp {
+	if c.Command(helpName) == nil && !c.HideHelp {
 		if !c.HideHelpCommand {
-			c.Subcommands = append(c.Subcommands, helpCommand)
+			c.Subcommands = append(c.Subcommands, ctx.App.helpCmd)
 		}
 	}
 	if !c.HideHelp && HelpFlag != nil {
@@ -374,7 +374,7 @@ func (c *Command) parseFlags(args Args, cCtx *Context) (*flag.FlagSet, error) {
 			ancestors = append(ancestors, flagScope{set: ctx.flagSet, flags: ctx.Command.Flags})
 		}
 	}
-	err = parseArgs(set, c, args.Tail(), !c.hasSubcommands(), ancestors, cCtx.shellComplete)
+	err = parseArgs(set, c, args.Tail(), !c.hasSubcommands(cCtx.App.helpCmd), ancestors, cCtx.shellComplete)
 	if err != nil {
 		return nil, err
 	}
@@ -385,10 +385,11 @@ func (c *Command) parseFlags(args Args, cCtx *Context) (*flag.FlagSet, error) {
 }
 
 // hasSubcommands reports whether the command has a subcommand other than
-// help, so its first argument may name a command with its own flags.
-func (c *Command) hasSubcommands() bool {
+// the app's help command, so its first argument may name a command with its
+// own flags.
+func (c *Command) hasSubcommands(help *Command) bool {
 	for _, sub := range c.Subcommands {
-		if sub != helpCommand {
+		if sub != help {
 			return true
 		}
 	}

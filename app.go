@@ -124,6 +124,10 @@ type App struct {
 	didSetup  bool
 	separator separatorSpec
 
+	// helpCmd is this app's copy of the built-in help command. Setup writes the
+	// help name and separator into every subcommand, so Apps must not share one.
+	helpCmd *Command
+
 	rootCommand *Command
 }
 
@@ -166,6 +170,8 @@ func (a *App) Setup() {
 	}
 
 	a.didSetup = true
+	helpCmd := *helpCommand
+	a.helpCmd = &helpCmd
 
 	if a.Name == "" {
 		a.Name = filepath.Base(os.Args[0])
@@ -237,9 +243,9 @@ func (a *App) Setup() {
 		c.flagCategories = newFlagCategoriesFromFlags(c.Flags)
 	}
 
-	if a.Command(helpCommand.Name) == nil && !a.HideHelp {
+	if a.Command(helpName) == nil && !a.HideHelp {
 		if !a.HideHelpCommand {
-			a.appendCommand(helpCommand)
+			a.appendCommand(a.helpCmd)
 		}
 
 		if HelpFlag != nil {
