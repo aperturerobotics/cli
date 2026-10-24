@@ -72,16 +72,16 @@ func (a *App) prepareFishCommands(commands []*Command, allCommands *[]string, pr
 		}
 
 		var completion strings.Builder
-		completion.WriteString(fmt.Sprintf(
+		fmt.Fprintf(&completion,
 			"complete -r -c %s -n '%s' -a '%s'",
 			a.Name,
 			a.fishSubcommandHelper(previousCommands),
 			strings.Join(command.Names(), " "),
-		))
+		)
 
 		if command.Usage != "" {
-			completion.WriteString(fmt.Sprintf(" -d '%s'",
-				escapeSingleQuotes(command.Usage)))
+			fmt.Fprintf(&completion, " -d '%s'",
+				escapeSingleQuotes(command.Usage))
 		}
 
 		if !command.HideHelp {

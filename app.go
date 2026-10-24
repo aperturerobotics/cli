@@ -138,7 +138,7 @@ type SuggestCommandFunc func(commands []*Command, provided string) string
 // Tries to find out when this binary was compiled.
 // Returns the current time if it fails to find it.
 func compileTime() time.Time {
-	info, err := os.Stat(os.Args[0])
+	info, err := os.Stat(os.Args[0]) //nolint:gosec // reads the metadata of our own executable.
 	if err != nil {
 		return time.Now()
 	}
