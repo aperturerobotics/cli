@@ -176,7 +176,7 @@ func tryDiff(t *testing.T, a, b string) {
 		return
 	}
 
-	if err := os.WriteFile(bPath, []byte(b), 0o0644); err != nil {
+	if err := os.WriteFile(bPath, []byte(b), 0o0644); err != nil { //nolint:gosec // bPath names a golden file in testdata.
 		t.Logf("failed to write: %v", err)
 		t.FailNow()
 	}
